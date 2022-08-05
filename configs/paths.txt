@@ -1,0 +1,16 @@
+-------------
+_vimrc
+
+Win: ~/
+Linux: ~/
+-------------
+init.vim
+
+Win: ~/AppData/Local/nvim
+Linux: ~/.config/nvim/init.vim
+-------------
+config.lua (lunarvim)
+
+win: ~/AppData/Local/lvim
+linux: ~/.config/lvim/config.lua
+-------------
