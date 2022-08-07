@@ -6,7 +6,7 @@
 -- Enable powershell as your default shell
 vim.opt.shell = "pwsh.exe -NoLogo"
 vim.opt.shellcmdflag =
-  "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
+"-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
 vim.cmd [[
 		let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
 		let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
@@ -35,6 +35,7 @@ lvim.leader = "space"
 vim.cmd("let mapleader = '<Space>'")
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+lvim.keys.insert_mode["jf"] = "<esc>"
 -- unmap a default keymapping
 -- lvim.keys.normal_mode["<C-Up>"] = false
 -- edit a default keymapping
@@ -49,7 +50,6 @@ vim.cmd([[
     set ffs=unix,dos
     set fileformat=unix
     set fileformats=unix,dos
-    inoremap jf <Esc>
 ]])
 
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
@@ -101,8 +101,7 @@ lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
-  "c",
-  "lua",
+  "all",
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -171,7 +170,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 
 -- Additional Plugins
 lvim.plugins = {
-  {"windwp/nvim-spectre"},
+  { "windwp/nvim-spectre" },
   {
     "windwp/nvim-spectre",
     event = "BufRead",
@@ -179,8 +178,8 @@ lvim.plugins = {
       require("spectre").setup()
     end,
   },
-  
-  {"sindrets/diffview.nvim"},
+
+  { "sindrets/diffview.nvim" },
   {
     "sindrets/diffview.nvim",
     event = "BufRead",
