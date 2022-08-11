@@ -3,6 +3,7 @@
  `lvim` is the global options object
 ]]
 
+--- Windows specific.
 -- Enable powershell as your default shell
 vim.opt.shell = "pwsh.exe -NoLogo"
 vim.opt.shellcmdflag =
@@ -24,6 +25,7 @@ vim.g.clipboard = {
     ["*"] = "win32yank.exe -o --lf",
   },
 }
+---
 
 -- general
 lvim.log.level = "warn"
@@ -38,8 +40,10 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.insert_mode["jf"] = "<esc>"
 -- unmap a default keymapping
 -- lvim.keys.normal_mode["<C-Up>"] = false
+-- vim.keymap.del("n", "<C-Up>")
 -- edit a default keymapping
 -- lvim.keys.normal_mode["<C-q>"] = ":q<cr>"
+-- lvim.keymap.set("n", "<C-q>", ":q<cr>" )
 
 vim.cmd([[
     set encoding=utf-8
@@ -90,19 +94,18 @@ lvim.builtin.terminal.active = true
 -- lvim.builtin.terminal.shell = "pwsh.exe -NoLogo"
 
 -- nvim-tree has some performance issues on windows, see kyazdani42/nvim-tree.lua#549
-lvim.builtin.nvimtree.setup.diagnostics.enable = false
-lvim.builtin.nvimtree.setup.filters.custom = false
-lvim.builtin.nvimtree.setup.git.enable = false
-lvim.builtin.nvimtree.setup.update_cwd = false
-lvim.builtin.nvimtree.setup.update_focused_file.update_cwd = false
+lvim.builtin.nvimtree.setup.diagnostics.enable = nil
+lvim.builtin.nvimtree.setup.filters.custom = nil
+lvim.builtin.nvimtree.setup.git.enable = nil
+lvim.builtin.nvimtree.setup.update_cwd = nil
+lvim.builtin.nvimtree.setup.update_focused_file.update_cwd = nil
 lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.setup.renderer.highlight_git = false
-lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+lvim.builtin.nvimtree.setup.renderer.highlight_git = nil
+lvim.builtin.nvimtree.setup.renderer.icons.show.git = nil
 
 -- if you don't want all the parsers change this to a table of the ones you want
-lvim.builtin.treesitter.ensure_installed = {
-  "all",
-}
+-- lvim.builtin.treesitter.ensure_installed = {
+-- }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
@@ -110,7 +113,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- generic LSP settings
 
 -- ---@usage disable automatic installation of servers
--- lvim.lsp.automatic_servers_installation = false
+lvim.lsp.installer.setup.automatic_installation = true
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 -- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
@@ -183,16 +186,53 @@ lvim.plugins = {
   {
     "sindrets/diffview.nvim",
     event = "BufRead",
+    config = function()
+    end,
+  },
+
+  { "vuki656/package-info.nvim" },
+  {
+    "vuki656/package-info.nvim",
+    event = "BufRead",
+    config = function()
+      require('package-info').setup()
+
+    end,
+    requires = "MunifTanjim/nui.nvim"
+  },
+
+  { "saecki/crates.nvim" },
+  {
+    "saecki/crates.nvim",
+    event = "BufRead",
+    config = function()
+      require('crates').setup()
+    end,
+    requires = { 'nvim-lua/plenary.nvim' },
   },
 }
+
 --
 
--- Additional Plugin Keymappings
+-- Extra plugins keymappings:
 vim.cmd("nnoremap <Space>sw <cmd>lua require('spectre').open_visual({select_word=true})<CR>")
 vim.cmd("nnoremap <Space>sW viw:lua require('spectre').open_file_search()<cr>")
 
 lvim.keys.normal_mode["<Leader>gh"] = ":DiffviewFileHistory %<CR>"
 lvim.keys.normal_mode["<Leader>gH"] = ":DiffviewFileHistory<CR>"
+
+-- Show dependency versions
+vim.keymap.set({ "n" }, "<LEADER>ns", require("package-info").show, { silent = true, noremap = true })
+-- Hide dependency versions
+vim.keymap.set({ "n" }, "<LEADER>nc", require("package-info").hide, { silent = true, noremap = true })
+-- Update dependency on the line
+vim.keymap.set({ "n" }, "<LEADER>nu", require("package-info").update, { silent = true, noremap = true })
+-- Delete dependency on the line
+vim.keymap.set({ "n" }, "<LEADER>nd", require("package-info").delete, { silent = true, noremap = true })
+-- Install a new dependency
+vim.keymap.set({ "n" }, "<LEADER>ni", require("package-info").install, { silent = true, noremap = true })
+-- Install a different dependency version
+vim.keymap.set({ "n" }, "<LEADER>np", require("package-info").change_version, { silent = true, noremap = true })
 --
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
