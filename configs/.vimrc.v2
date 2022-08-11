@@ -1,0 +1,94 @@
+""" VIM CONFIGURATION
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8
+let $LANG='en'
+set langmenu=en
+" Line Endigs
+set ff=unix " The most cross platform.
+set ffs=unix
+set fileformat=unix
+set fileformats=unix,dos
+" set ff=dos
+" set ff=mac
+
+" Command history
+set history=500
+set undolevels=300
+
+set showcmd
+set nobackup
+" Don't beep.
+set visualbell
+" Don't beep.
+set noerrorbells
+set nowrap
+" Automatically reload files when theres a change outside Vim.
+set autoread
+" Fast keyboard.
+set ttyfast
+set ruler
+" Always show the status line
+set laststatus=2
+" Visual autocomplete for command menu
+set wildmenu
+" Show line numbers
+set number
+" Highlight matching brace
+set showmatch
+" Highlight line currently under cursor
+" set cursorline
+set nocursorline
+" Regular expressions
+set magic
+" Binary support
+" set binary
+
+" Use mouse
+set mouse=a
+
+" Search
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+
+set autoindent
+"Auto indent
+set ai
+"Smart indent
+set si
+" Default indent size
+set tabstop=4
+set shiftwidth=4
+set smarttab
+" TABs to spaces
+set expandtab
+set backspace=eol,start,indent
+
+" Trim trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
+
+syntax on
+syntax enable
+filetype on
+filetype indent on
+filetype plugin on
+filetype plugin indent on
+
+"set t_Co=256
+"set background=dark
+"color desert
+
+" terminal-mode:
+:tnoremap <Esc> <C-\><C-n>
+"""
+
+""" GLOBAL KEYMAPPINGS
+let mapleader = '<Space>'
+inoremap jf <Esc>
+"""
+
+""" PLUGINS
+"""
