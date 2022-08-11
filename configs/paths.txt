@@ -1,5 +1,5 @@
 -------------
-_vimrc
+.vimrc
 
 Win: ~/
 Linux: ~/
