@@ -53,15 +53,15 @@ set incsearch
 set ignorecase
 set smartcase
 
-
-set autoindent
 "Auto indent
+set autoindent
 set ai
 "Smart indent
+set smartindent
 set si
 " Default indent size
-set tabstop=4
-set shiftwidth=4
+"set tabstop=4
+"set shiftwidth=4
 set smarttab
 " TABs to spaces
 set expandtab
@@ -86,9 +86,19 @@ filetype plugin indent on
 """
 
 """ GLOBAL KEYMAPPINGS
-let mapleader = '<Space>'
+let mapleader = ' '
 inoremap jf <Esc>
+nnoremap <leader>w :w<CR>
+nnoremap <C-s> :w<CR>
+nnoremap <leader>q :q<CR>
 """
 
-""" PLUGINS
+""" PLUGINS (Packer)
+lua require('plugins')
+
+" Compile with Packer after the plugins file gets updated.
+augroup packer_user_config
+  autocmd!
+  autocmd BufWritePost plugins.lua source <afile> | PackerSync | PackerCompile profile=true
+augroup end
 """

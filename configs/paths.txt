@@ -1,16 +1,20 @@
 -------------
-.vimrc
-
-Win: ~/
-Linux: ~/
--------------
-init.vim
+init.vim (neovim)
 
 Win: ~/AppData/Local/nvim
 Linux: ~/.config/nvim/init.vim
 -------------
+.vimrc (neovim)
+
+Win: ~/
+Linux: ~/
+-------------
+plugins.lua
+
+Win: ~/.config/nvim/lua/
+-------------
 config.lua (lunarvim)
 
-win: ~/AppData/Local/lvim
-linux: ~/.config/lvim/config.lua
+Win: ~/AppData/Local/lvim
+Linux: ~/.config/lvim/config.lua
 -------------
