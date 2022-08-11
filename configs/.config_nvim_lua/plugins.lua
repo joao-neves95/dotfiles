@@ -17,9 +17,7 @@ vim.cmd('packadd packer.nvim')
 require('theme')
 
 require('packer').startup({ function(use)
-  -- Packer can manage itself
   -- https://github.com/wbthomason/packer.nvim
-  use 'wbthomason/packer.nvim'
   -- TODO: Add keymap for PackerStatus.
 
   use {
@@ -29,13 +27,21 @@ require('packer').startup({ function(use)
     end
   }
 
-  -- Themes
-  --
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icons
+    },
+    tag = 'nightly',
+    config = function()
+      require("nvim-tree").setup()
+
+      Keymap('n', '<leader>e', ':NvimTreeToggle<CR>', DefaultKeymapOpts)
+    end
+  }
 
   use {
     "nvim-treesitter/nvim-treesitter",
-    -- config = function()
-    -- end,
     run = ':TSUpdate'
   }
 
