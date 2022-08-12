@@ -1,4 +1,5 @@
 require('helpers')
+require('theme')
 
 -- Auto-install Packer if needed.
 local fn = vim.fn
@@ -14,20 +15,35 @@ end
 
 vim.cmd('packadd packer.nvim')
 
-require('theme')
+-- Compile with Packer after the plugins file gets updated.
+-- " vim.cmd([[
+-- "   augroup packer_user_config
+-- "     autocmd!
+-- "     autocmd BufWritePost plugins.lua source <afile> | PackerSync | PackerCompile profile=true
+-- "   augroup end
+-- " ]])
+--
 
 require('packer').startup({ function(use)
   -- https://github.com/wbthomason/packer.nvim
+  use {
+    'wbthomason/packer.nvim',
+    config = function()
+      Keymap('n', '<leader>pS', '[[<Cmd>lua require("packer.util").float({ border = "single" })<CR>]]',
+        DefaultKeymapOpts('Status'))
+    end
+  }
   -- TODO: Add keymap for PackerStatus.
 
   use {
     "folke/which-key.nvim",
     config = function()
       require("which-key").setup()
-    end
+    end,
   }
 
   use {
+    -- https://github.com/kyazdani42/nvim-tree.lua
     'kyazdani42/nvim-tree.lua',
     requires = {
       'kyazdani42/nvim-web-devicons', -- optional, for file icons
@@ -36,13 +52,71 @@ require('packer').startup({ function(use)
     config = function()
       require("nvim-tree").setup()
 
-      Keymap('n', '<leader>e', ':NvimTreeToggle<CR>', DefaultKeymapOpts)
+      Keymap('n', '<leader>e', ':NvimTreeToggle<CR>', DefaultKeymapOpts('Explorer'))
+    end
+  }
+
+  use {
+    -- https://github.com/akinsho/bufferline.nvim
+    'akinsho/bufferline.nvim',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = function()
+      require("bufferline").setup()
+
+      -- Cycle buffers.
+      Keymap('n', '<S-h>', ':BufferLineCyclePrev<CR>', DefaultKeymapOpts())
+      Keymap('n', '<S-l>', ':BufferLineCycleNext<CR>', DefaultKeymapOpts())
+      -- Move the buffers.
+      Keymap('n', '<C-S-h>', ':BufferLineMovePrev<CR>', DefaultKeymapOpts())
+      Keymap('n', '<C-S-l>', ':BufferLineMoveNext<CR>', DefaultKeymapOpts())
+    end
+  }
+
+  use {
+    -- https://github.com/nvim-lualine/lualine.nvim
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true },
+    config = function()
+      require('lualine').setup {
+        options = {
+          theme = 'nord'
+        }
+      }
+    end
+  }
+
+  -- use {
+  --   -- (no mouse support for now)
+  --   -- https://github.com/petertriho/nvim-scrollbar
+  --   "petertriho/nvim-scrollbar",
+  --   requires = { 'kevinhwang91/nvim-hlslens', opt = true },
+  --   config = function()
+  --     require("scrollbar").setup()
+  --     require("scrollbar.handlers.search").setup()
+  --   end
+  -- }
+  use {
+    -- https://github.com/dstein64/nvim-scrollview
+    'dstein64/nvim-scrollview',
+    config = function()
+      require('scrollview').setup()
     end
   }
 
   use {
     "nvim-treesitter/nvim-treesitter",
     run = ':TSUpdate'
+  }
+
+  use {
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup {
+        opleader = {
+          line = '/',
+        }
+      }
+    end
   }
 
   SetTheme(use, 'neon')

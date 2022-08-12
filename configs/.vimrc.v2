@@ -12,6 +12,8 @@ set fileformats=unix,dos
 " set ff=dos
 " set ff=mac
 
+set timeoutlen=500
+
 " Command history
 set history=500
 set undolevels=300
@@ -67,9 +69,6 @@ set smarttab
 set expandtab
 set backspace=eol,start,indent
 
-" Trim trailing whitespace on save
-autocmd BufWritePre * :%s/\s\+$//e
-
 syntax on
 syntax enable
 filetype on
@@ -77,9 +76,8 @@ filetype indent on
 filetype plugin on
 filetype plugin indent on
 
-"set t_Co=256
-"set background=dark
-"color desert
+" Trim trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
 
 " terminal-mode:
 :tnoremap <Esc> <C-\><C-n>
@@ -91,6 +89,13 @@ inoremap jf <Esc>
 nnoremap <leader>w :w<CR>
 nnoremap <C-s> :w<CR>
 nnoremap <leader>q :q<CR>
+
+" Window movement
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+"
 """
 
 """ PLUGINS (Packer)
@@ -101,4 +106,5 @@ augroup packer_user_config
   autocmd!
   autocmd BufWritePost plugins.lua source <afile> | PackerSync | PackerCompile profile=true
 augroup end
+"
 """
