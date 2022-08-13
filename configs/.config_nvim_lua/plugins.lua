@@ -1,4 +1,5 @@
 require('helpers')
+require('lsp')
 require('theme')
 
 -- Auto-install Packer if needed.
@@ -14,15 +15,6 @@ end
 ---
 
 vim.cmd('packadd packer.nvim')
-
--- Compile with Packer after the plugins file gets updated.
--- " vim.cmd([[
--- "   augroup packer_user_config
--- "     autocmd!
--- "     autocmd BufWritePost plugins.lua source <afile> | PackerSync | PackerCompile profile=true
--- "   augroup end
--- " ]])
---
 
 require('packer').startup({ function(use)
   -- https://github.com/wbthomason/packer.nvim
@@ -119,6 +111,7 @@ require('packer').startup({ function(use)
     end
   }
 
+  LspSetup(use)
   SetTheme(use, 'neon')
 
   -- Automatically set up your configuration after cloning packer.nvim
