@@ -75,6 +75,7 @@ filetype on
 filetype indent on
 filetype plugin on
 filetype plugin indent on
+set omnifunc=v:lua.vim.lsp.omnifunc
 
 " Trim trailing whitespace on save
 autocmd BufWritePre * :%s/\s\+$//e
@@ -83,23 +84,9 @@ autocmd BufWritePre * :%s/\s\+$//e
 :tnoremap <Esc> <C-\><C-n>
 """
 
-""" GLOBAL KEYMAPPINGS
-let mapleader = ' '
-inoremap jf <Esc>
-nnoremap <leader>w :w<CR>
-nnoremap <C-s> :w<CR>
-nnoremap <leader>q :q<CR>
-
-" Window movement
-noremap <C-h> <C-w>h
-noremap <C-j> <C-w>j
-noremap <C-k> <C-w>k
-noremap <C-l> <C-w>l
-"
-"""
-
 """ PLUGINS (Packer)
 lua require('plugins')
+lua require('keymaps')
 
 " Compile with Packer after the plugins file gets updated.
 augroup packer_user_config

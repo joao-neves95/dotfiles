@@ -10,7 +10,6 @@ local install_path = fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
   packer_bootstrap = fn.system({ 'git', 'clone', 'https://github.com/wbthomason/packer.nvim', install_path })
   Execute 'packadd packer.nvim'
-  --vim.cmd [[packadd packer.nvim]]
 end
 ---
 
@@ -21,11 +20,15 @@ require('packer').startup({ function(use)
   use {
     'wbthomason/packer.nvim',
     config = function()
-      Keymap('n', '<leader>pS', '[[<Cmd>lua require("packer.util").float({ border = "single" })<CR>]]',
-        DefaultKeymapOpts('Status'))
-    end
+      Keymap('n', '<leader>pS', ':PackerStatus<CR>', DefaultKeymapOpts('Status'))
+      Keymap('n', '<leader>pp', ':PackerProfile<CR>', DefaultKeymapOpts('Profile'))
+      Keymap('n', '<leader>pi', ':PackerInstall<CR>', DefaultKeymapOpts('Install'))
+      Keymap('n', '<leader>pu', ':PackerUpdate<CR>', DefaultKeymapOpts('Update'))
+      Keymap('n', '<leader>pc', ':PackerCompile<CR>', DefaultKeymapOpts('Compile'))
+      Keymap('n', '<leader>ps', ':PackerSync<CR>', DefaultKeymapOpts('Sync'))
+    end,
   }
-  -- TODO: Add keymap for PackerStatus.
+  -- TODO: Add keymap for .
 
   use {
     "folke/which-key.nvim",
@@ -45,7 +48,7 @@ require('packer').startup({ function(use)
       require("nvim-tree").setup()
 
       Keymap('n', '<leader>e', ':NvimTreeToggle<CR>', DefaultKeymapOpts('Explorer'))
-    end
+    end,
   }
 
   use {
@@ -61,7 +64,7 @@ require('packer').startup({ function(use)
       -- Move the buffers.
       Keymap('n', '<C-S-h>', ':BufferLineMovePrev<CR>', DefaultKeymapOpts())
       Keymap('n', '<C-S-l>', ':BufferLineMoveNext<CR>', DefaultKeymapOpts())
-    end
+    end,
   }
 
   use {
@@ -72,9 +75,9 @@ require('packer').startup({ function(use)
       require('lualine').setup {
         options = {
           theme = 'nord'
-        }
+        },
       }
-    end
+    end,
   }
 
   -- use {
@@ -92,7 +95,7 @@ require('packer').startup({ function(use)
     'dstein64/nvim-scrollview',
     config = function()
       require('scrollview').setup()
-    end
+    end,
   }
 
   use {
@@ -108,7 +111,29 @@ require('packer').startup({ function(use)
           line = '/',
         }
       }
-    end
+    end,
+  }
+
+  use {
+    -- https://github.com/weilbith/nvim-code-action-menu
+    'weilbith/nvim-code-action-menu',
+    config = function ()
+      Keymap('n', '<leader>la', ':CodeActionMenu<CR>', DefaultKeymapOpts('Code action'))
+    end,
+  }
+
+  use {
+    -- https://github.com/kosayoda/nvim-lightbulb
+    'kosayoda/nvim-lightbulb',
+    event = "BufReadPre",
+    requires = 'antoinemadec/FixCursorHold.nvim',
+    config = function()
+      require('nvim-lightbulb').setup({
+        autocmd = {
+          enabled = true
+        }
+      })
+    end,
   }
 
   LspSetup(use)
