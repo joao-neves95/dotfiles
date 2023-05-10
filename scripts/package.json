@@ -1,0 +1,16 @@
+{
+  "name": "scripts",
+  "version": "0.1.0",
+  "description": "A collection of personal scripts",
+  "main": "",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "João Neves (_SHIVAYL_)",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "neves.js": "github:joao-neves95/neves.js",
+    "pdf2json": "^2.0.2"
+  }
+}
