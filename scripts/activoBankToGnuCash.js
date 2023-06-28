@@ -1,10 +1,19 @@
 import { writeFileSync } from "node:fs";
 import { join as pathJoin } from "node:path";
 
-import { isStrNumeric, strStartsWithAnyOf } from "neves.js/dist/string.js";
+import {
+  isStrNullOrWhiteSpace,
+  isStrNumeric,
+  strStartsWithAnyOf,
+} from "neves.js/dist/string.js";
 import { parsePdfIntoTextArray } from "neves.js/dist/pdf2jsonUtils.js";
 
 import PDFParser from "pdf2json";
+
+// e.g: "2.01"
+const isStrANumLeftPaddedWith1Digit = (str) => {
+  return isStrNumeric(str) && str.split(".")[0]?.length === 1;
+};
 
 class ArraySlider {
   #array;
@@ -102,14 +111,22 @@ const isTableEnd = (value) => {
 const isNextElementRowEnd = (arraySlider) => {
   return (
     // Next 2 columns are dates.
-    (isStrNumeric(
+    (isStrANumLeftPaddedWith1Digit(
       arraySlider.array[arraySlider.currentIndex + 1].split("/")[0]
     ) &&
-      isStrNumeric(
+      isStrANumLeftPaddedWith1Digit(
         arraySlider.array[arraySlider.currentIndex + 2].split("/")[0]
       )) ||
     isTableEnd(arraySlider.array[arraySlider.currentIndex + 1])
   );
+};
+
+const isStrPaymentNetwork = (str) => {
+  return !isStrNullOrWhiteSpace(str) && (str === "MB" || str === "VIS");
+};
+
+const isElementPaymentNetwork = (arraySlider) => {
+  return isStrPaymentNetwork(arraySlider.array[arraySlider.currentIndex]);
 };
 
 /** @param { ArraySlider } arraySlider */
@@ -119,37 +136,24 @@ const extractCombinedStatement = (arraySlider) => {
 
   let allMovements = [];
 
-  let includesSimpleAccountMovements;
-  // Simple account movements.
-  while (true) {
-    includesSimpleAccountMovements = searchSlider.moveToSearchString(
-      "EXTRATO DE",
-      arraySlider.array.length
-    );
+  // TODO: Support simple account movements.
 
-    if (!includesSimpleAccountMovements) {
-      break;
-    }
+  // Credit card movements.
+  let includesCreditCardMovements;
 
-    // Move to after the columns.
-    arraySlider.currentIndex = searchSlider.currentIndex + 12;
-    allMovements = allMovements.concat(extractMovements(arraySlider, true));
-    searchSlider.currentIndex = arraySlider.currentIndex;
+  includesCreditCardMovements = searchSlider.moveToSearchString(
+    "RESUMO DE MOVIMENTOS",
+    arraySlider.array.length
+  );
+
+  if (!includesCreditCardMovements) {
+    arraySlider.setReturnData(allMovements);
+    return arraySlider;
   }
 
-  // Go back.
-  arraySlider.currentIndex = originalIndex;
-  searchSlider.currentIndex = originalIndex;
-
-  let includesCreditCardMovements;
-  // Credit card movements.
   while (true) {
-    searchSlider.moveToSearchString(
-      "RESUMO DE MOVIMENTOS",
-      arraySlider.array.length
-    );
     includesCreditCardMovements = searchSlider.moveToSearchString(
-      "SALDO EM DIVIDA A DATA DO EXTRATO ANTERIOR",
+      "CREDITO",
       arraySlider.array.length
     );
 
@@ -157,9 +161,11 @@ const extractCombinedStatement = (arraySlider) => {
       break;
     }
 
-    // Move to after the columns.
-    arraySlider.currentIndex = searchSlider.currentIndex + 11;
+    searchSlider.currentIndex += 1;
+    arraySlider.currentIndex = searchSlider.currentIndex;
+
     allMovements = allMovements.concat(extractMovements(arraySlider, true));
+
     searchSlider.currentIndex = arraySlider.currentIndex;
   }
 
@@ -235,29 +241,29 @@ const extractMovements = (
 
     currentRow = extractAndAdvanceNextRow(arraySlider);
 
+    console.log("currentRow:", currentRow);
+
     if (!currentRow) {
-      break;
+      continue;
     }
 
     currentMovement = new AccountMovement();
 
-    for (iCol = 0; iCol < currentRow.length; ++iCol) {
-      currentText = currentRow[iCol];
+    // TODO: add date conversion (e.g.: "3.01" -> "2023/03/01")
+    currentMovement.movementDate = currentRow[0];
+    // TODO: add date conversion (e.g.: "3.01" -> "2023/03/01")
+    currentMovement.valueDate = currentRow[1];
 
-      if (iCol === 0) {
-        // TODO: add date conversion (e.g.: "3.01" -> "2023/03/01")
-        currentMovement.movementDate = currentText;
-      } else if (iCol === 1) {
-        // TODO: add date conversion (e.g.: "3.01" -> "2023/03/01")
-        currentMovement.valueDate = currentText;
-      } else if (iCol === 2) {
-        currentMovement.description = currentText;
-      } else if (iCol === 3) {
-        currentMovement.debit = currentText;
-      } else if (iCol === 4) {
-        currentMovement.network = currentText;
-      }
+    currentMovement.description = "";
+    let iCol = 2;
+    while (!isStrPaymentNetwork(currentRow[iCol]) && iCol === currentRow.length - 1) {
+      currentMovement.description += currentRow[iCol];
+      ++iCol;
     }
+
+    var net = currentRow[currentRow.length - 2];
+    currentMovement.network = isStrPaymentNetwork(net) ? net : null;
+    currentMovement.debit = currentRow[currentRow.length - 1];
 
     allMovements.push(currentMovement);
     currentMovement = null;
@@ -283,31 +289,29 @@ const extractAndAdvanceNextRow = (arraySlider) => {
   ) {
     currentText = arraySlider.currentText;
 
-    if (iCol === 1) {
-      row.push(currentText);
-    } else if (iCol === 2) {
-      row.push(currentText);
-    } else if (iCol === 3) {
-      // This is a credit re-payment. Ignore.
-      if (currentText.startsWith(">")) {
-        row = null;
-        row = [];
-        iCol = 0;
-        arraySlider.currentIndex += 1;
-        continue;
-      }
+    if (currentText.startsWith(">")) {
+      // Also skip the credit value (we only want debits).
+      ++arraySlider.currentIndex;
+      return null;
+    }
 
-      row.push(currentText);
-    } else if (iCol === 4) {
-      row.push(currentText);
-    } else if (iCol === 5 && isNextElementRowEnd(arraySlider)) {
-      row.push(currentText);
+    row.push(currentText);
 
+    if (
+      iCol !== 1 &&
+      !isElementPaymentNetwork(arraySlider) &&
+      isNextElementRowEnd(arraySlider)
+    ) {
       return row;
-    } else {
-      throw new Error("Unhandled!");
     }
   }
+};
+
+/** @param { ArraySlider } arraySlider */
+const extractStatement = (arraySlider) => {
+  return isCreditCardStatementPdf(arraySlider)
+    ? extractCreditCardStatement(arraySlider)
+    : extractCombinedStatement(arraySlider);
 };
 
 (function main(args) {
@@ -325,11 +329,7 @@ const extractAndAdvanceNextRow = (arraySlider) => {
     });
 
     let dataSlider = new ArraySlider(textsArray);
-    const isCreditCardStatementOnly = isCreditCardStatementPdf(dataSlider);
-
-    dataSlider = isCreditCardStatementOnly
-      ? extractCreditCardStatement(dataSlider)
-      : extractCombinedStatement(dataSlider);
+    dataSlider = extractStatement(dataSlider);
 
     writeFileSync(
       pathJoin("data", "movements.json"),
@@ -340,7 +340,8 @@ const extractAndAdvanceNextRow = (arraySlider) => {
     );
   });
 
-  pdfParser.loadPDF("./data/EXT  AUTONOMO CARTAO (DOC 202300001).pdf");
-  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023003.pdf");
-  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023004.pdf");
+  // pdfParser.loadPDF("./data/EXT  AUTONOMO CARTAO (DOC 202300001).pdf");
+  pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023002_both.pdf");
+  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023003_both.pdf");
+  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023004_simple.pdf");
 })(process.argv);
