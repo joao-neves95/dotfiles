@@ -15,6 +15,19 @@ const isStrANumLeftPaddedWith1Digit = (str) => {
   return isStrNumeric(str) && str.split(".")[0]?.length === 1;
 };
 
+// TODO: e.g.: "3.01" -> "2023/03/01"
+const normalizeDate = (str) => {
+  var splitDate = str.split(".");
+
+  return (
+    new Date().getFullYear() +
+    "/" +
+    splitDate[0].padStart(2, "0") +
+    "/" +
+    splitDate[1].padStart(2, "0")
+  );
+};
+
 class ArraySlider {
   #array;
 
@@ -241,32 +254,32 @@ const extractMovements = (
 
     currentRow = extractAndAdvanceNextRow(arraySlider);
 
-    console.log("currentRow:", currentRow);
-
     if (!currentRow) {
       continue;
     }
 
     currentMovement = new AccountMovement();
 
-    // TODO: add date conversion (e.g.: "3.01" -> "2023/03/01")
-    currentMovement.movementDate = currentRow[0];
-    // TODO: add date conversion (e.g.: "3.01" -> "2023/03/01")
-    currentMovement.valueDate = currentRow[1];
+    currentMovement.movementDate = normalizeDate(currentRow[0]);
+    currentMovement.valueDate = normalizeDate(currentRow[1]);
 
     currentMovement.description = "";
     let iCol = 2;
-    while (!isStrPaymentNetwork(currentRow[iCol]) && iCol === currentRow.length - 1) {
+    while (
+      !isStrPaymentNetwork(currentRow[iCol]) &&
+      iCol === currentRow.length - 1
+    ) {
       currentMovement.description += currentRow[iCol];
       ++iCol;
     }
 
-    var net = currentRow[currentRow.length - 2];
+    const net = currentRow[currentRow.length - 2];
     currentMovement.network = isStrPaymentNetwork(net) ? net : null;
     currentMovement.debit = currentRow[currentRow.length - 1];
 
     allMovements.push(currentMovement);
     currentMovement = null;
+    currentRow = null;
   }
 
   return allMovements;
@@ -341,7 +354,7 @@ const extractStatement = (arraySlider) => {
   });
 
   // pdfParser.loadPDF("./data/EXT  AUTONOMO CARTAO (DOC 202300001).pdf");
-  pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023002_both.pdf");
-  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023003_both.pdf");
+  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023002_both.pdf");
+  pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023003_both.pdf");
   // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023004_simple.pdf");
 })(process.argv);
