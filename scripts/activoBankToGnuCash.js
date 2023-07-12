@@ -2,6 +2,8 @@ import { writeFileSync } from "node:fs";
 import { join as pathJoin } from "node:path";
 
 import {
+  emptyString,
+  spaceString,
   isStrNullOrWhiteSpace,
   isStrNumeric,
   strStartsWithAnyOf,
@@ -123,9 +125,9 @@ const isTableEnd = (value) => {
 /** @param { ArraySlider } arraySlider */
 const isNextElementRowEnd = (arraySlider) => {
   const currentPlus1 =
-    arraySlider.array[arraySlider.currentIndex + 1].split("/");
+    arraySlider.array[arraySlider.currentIndex + 1].split(".");
   const currentPlus2 =
-    arraySlider.array[arraySlider.currentIndex + 2].split("/");
+    arraySlider.array[arraySlider.currentIndex + 2].split(".");
 
   return (
     // Next 2 columns are dates.
@@ -159,7 +161,7 @@ const extractCombinedStatement = (arraySlider) => {
   let includesCreditCardMovements;
 
   includesCreditCardMovements = searchSlider.moveToSearchString(
-    "RESUMO DE MOVIMENTOS",
+    "SALDO EM DIVIDA A DATA DO EXTRATO ANTERIOR",
     arraySlider.array.length
   );
 
@@ -269,7 +271,8 @@ const extractMovements = (
       !isStrPaymentNetwork(currentRow[iCol]) &&
       iCol < currentRow.length - 1
     ) {
-      currentMovement.description += " " + currentRow[iCol];
+      currentMovement.description +=
+        (iCol !== 2 ? spaceString : emptyString) + currentRow[iCol];
       ++iCol;
     }
 
@@ -310,11 +313,7 @@ const extractAndAdvanceNextRow = (arraySlider) => {
 
     row.push(currentText);
 
-    if (
-      iCol !== 1 &&
-      !isElementPaymentNetwork(arraySlider) &&
-      isNextElementRowEnd(arraySlider)
-    ) {
+    if (isNextElementRowEnd(arraySlider)) {
       return row;
     }
   }
