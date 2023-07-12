@@ -1,5 +1,6 @@
 import { writeFileSync } from "node:fs";
-import { join as pathJoin } from "node:path";
+import { log } from "node:console";
+import { extname, join as pathJoin } from "node:path";
 
 import {
   emptyString,
@@ -8,6 +9,7 @@ import {
   isStrNumeric,
   strStartsWithAnyOf,
   isStrNullOrEmpty,
+  toTitleCaseSentence,
 } from "neves.js/dist/string.js";
 import { parsePdfIntoTextArray } from "neves.js/dist/pdf2jsonUtils.js";
 
@@ -111,7 +113,7 @@ class ArraySlider {
 
 class AccountMovement {
   movementDate;
-  valueDate;
+  processingDate;
   description;
   network;
   debit;
@@ -289,7 +291,7 @@ const extractCurrentPageMovements = (
     currentMovement = new AccountMovement();
 
     currentMovement.movementDate = normalizeDate(currentRow[0]);
-    currentMovement.valueDate = normalizeDate(currentRow[1]);
+    currentMovement.processingDate = normalizeDate(currentRow[1]);
 
     currentMovement.description = "";
     let iCol = 2;
@@ -301,6 +303,10 @@ const extractCurrentPageMovements = (
         (iCol !== 2 ? spaceString : emptyString) + currentRow[iCol];
       ++iCol;
     }
+
+    currentMovement.description = toTitleCaseSentence(
+      currentMovement.description
+    );
 
     const beforeLast = currentRow[currentRow.length - 2];
     const last = currentRow[currentRow.length - 1];
@@ -361,7 +367,31 @@ const extractStatement = (arraySlider) => {
     : extractCombinedStatement(arraySlider);
 };
 
+/**
+ *
+ * @param { AccountMovement[] } allMovements
+ */
+const jsonToGnuCashCsv = (allMovements) => {
+  return ["Date,Deposit,Description"]
+    .concat(
+      allMovements.map(
+        (move) => `${move.movementDate},${move.debit},${move.description}`
+      )
+    )
+    .join("\n");
+};
+
 (function main(args) {
+  if (args.length < 3) {
+    console.error("Arguments are invalid, the path is required.");
+
+    return;
+  } else if (extname(args[2]) !== ".pdf") {
+    console.error("The file argument is invalid, the file must be a PDF.");
+
+    return;
+  }
+
   const pdfParser = new PDFParser();
 
   pdfParser.on("pdfParser_dataError", (errData) =>
@@ -371,19 +401,17 @@ const extractStatement = (arraySlider) => {
   pdfParser.on("pdfParser_dataReady", (_) => {
     const textsArray = parsePdfIntoTextArray(pdfParser);
 
-    writeFileSync(pathJoin("data", "movements.txt"), textsArray.join("\n"), {
-      encoding: "utf8",
-    });
-
     let dataSlider = new ArraySlider(textsArray);
     dataSlider = extractStatement(dataSlider);
 
-    writeFileSync(
-      pathJoin("data", "movements.json"),
-      JSON.stringify(dataSlider.returnData, null, 2),
-      {
-        encoding: "utf8",
-      }
-    );
+    const parsedCsv = jsonToGnuCashCsv(dataSlider.returnData);
+
+    writeFileSync(pathJoin("data", "movements.csv"), parsedCsv, {
+      encoding: "utf8",
+    });
+
+    log(parsedCsv);
   });
+
+  pdfParser.loadPDF(args[2]);
 })(process.argv);
