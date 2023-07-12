@@ -7,6 +7,7 @@ import {
   isStrNullOrWhiteSpace,
   isStrNumeric,
   strStartsWithAnyOf,
+  isStrNullOrEmpty,
 } from "neves.js/dist/string.js";
 import { parsePdfIntoTextArray } from "neves.js/dist/pdf2jsonUtils.js";
 
@@ -17,11 +18,21 @@ const isStrANumLeftPaddedWith1Digit = (str) => {
   return isStrNumeric(str) && str.split(".")[0]?.length === 1;
 };
 
-// TODO: e.g.: "3.01" -> "2023/03/01"
+const isCorrectDateFormat = (str) => {
+  return !isStrNullOrEmpty(str) && /\d{4}\/\d{2}\/\d{2}/.test(str);
+};
+
 const normalizeDate = (str) => {
+  if (str.includes("/")) {
+    // Already on the correct format.
+    return str;
+  }
+
   var splitDate = str.split(".");
 
+  // e.g.: "3.01" -> "2023/03/01"
   return (
+    // This will only work if the movements are extracted on the same year as the movements itself, which is my use case.
     new Date().getFullYear() +
     "/" +
     splitDate[0].padStart(2, "0") +
@@ -124,17 +135,27 @@ const isTableEnd = (value) => {
 
 /** @param { ArraySlider } arraySlider */
 const isNextElementRowEnd = (arraySlider) => {
-  const currentPlus1 =
-    arraySlider.array[arraySlider.currentIndex + 1].split(".");
-  const currentPlus2 =
-    arraySlider.array[arraySlider.currentIndex + 2].split(".");
+  let currentPlus1 = arraySlider.array[arraySlider.currentIndex + 1];
+  let currentPlus2 = arraySlider.array[arraySlider.currentIndex + 2];
+
+  if (isCorrectDateFormat(currentPlus1) && isCorrectDateFormat(currentPlus2)) {
+    currentPlus1 = currentPlus1.split("/");
+    currentPlus2 = currentPlus2.split("/");
+
+    // TODO: Review this. Is it possible that a transaction takes place in one month and the bank processes it in the next? (e.g. day 31)
+    // Execution and processing dates are in the same month.
+    return currentPlus1[1] === currentPlus2[1];
+  }
+
+  currentPlus1 = currentPlus1.split(".");
+  currentPlus2 = currentPlus2.split(".");
 
   return (
     // Next 2 columns are dates.
     (isStrANumLeftPaddedWith1Digit(currentPlus1[0]) &&
       isStrANumLeftPaddedWith1Digit(currentPlus2[0]) &&
       // TODO: Review this. Is it possible that a transaction takes place in one month and the bank processes it in the next? (e.g. day 31)
-      // Execution dates are in the same month.
+      // Execution and processing dates are in the same month.
       currentPlus1[0] === currentPlus2[0]) ||
     isTableEnd(arraySlider.array[arraySlider.currentIndex + 1])
   );
@@ -142,10 +163,6 @@ const isNextElementRowEnd = (arraySlider) => {
 
 const isStrPaymentNetwork = (str) => {
   return !isStrNullOrWhiteSpace(str) && (str === "MB" || str === "VIS");
-};
-
-const isElementPaymentNetwork = (arraySlider) => {
-  return isStrPaymentNetwork(arraySlider.array[arraySlider.currentIndex]);
 };
 
 /** @param { ArraySlider } arraySlider */
@@ -183,7 +200,9 @@ const extractCombinedStatement = (arraySlider) => {
     searchSlider.currentIndex += 1;
     arraySlider.currentIndex = searchSlider.currentIndex;
 
-    allMovements = allMovements.concat(extractMovements(arraySlider, true));
+    allMovements = allMovements.concat(
+      extractCurrentPageMovements(arraySlider, true)
+    );
 
     searchSlider.currentIndex = arraySlider.currentIndex;
   }
@@ -200,9 +219,16 @@ const extractCreditCardStatement = (arraySlider) => {
   let allMovements = [];
 
   let includesCreditCardMovements;
+
   while (true) {
     includesCreditCardMovements = searchSlider.moveToSearchString(
       "DETALHE DOS MOVIMENTOS",
+      arraySlider.array.length
+    );
+
+    // Move to after the columns.
+    includesCreditCardMovements = searchSlider.moveToSearchString(
+      "Crédito",
       arraySlider.array.length
     );
 
@@ -211,11 +237,11 @@ const extractCreditCardStatement = (arraySlider) => {
       return arraySlider;
     }
 
-    // Move to after the columns.
-    arraySlider.currentIndex = searchSlider.currentIndex + 9;
+    searchSlider.currentIndex += 1;
+    arraySlider.currentIndex = searchSlider.currentIndex;
 
     allMovements = allMovements.concat(
-      extractMovements(arraySlider, false, false)
+      extractCurrentPageMovements(arraySlider, false, false)
     );
 
     searchSlider.currentIndex = arraySlider.currentIndex;
@@ -229,7 +255,7 @@ const extractCreditCardStatement = (arraySlider) => {
  * @param { boolean } isCombined
  * @param { boolean } isSimpleAccount
  */
-const extractMovements = (
+const extractCurrentPageMovements = (
   arraySlider,
   isCombined = false,
   isSimpleAccount = false
@@ -254,7 +280,7 @@ const extractMovements = (
       break;
     }
 
-    currentRow = extractAndAdvanceNextRow(arraySlider);
+    currentRow = extractAndAdvanceToNextRow(arraySlider);
 
     if (!currentRow) {
       continue;
@@ -276,9 +302,18 @@ const extractMovements = (
       ++iCol;
     }
 
-    const net = currentRow[currentRow.length - 2];
-    currentMovement.network = isStrPaymentNetwork(net) ? net : null;
-    currentMovement.debit = currentRow[currentRow.length - 1];
+    const beforeLast = currentRow[currentRow.length - 2];
+    const last = currentRow[currentRow.length - 1];
+    if (isStrPaymentNetwork(last)) {
+      currentMovement.network = last;
+      currentMovement.debit = beforeLast;
+    } else if (isStrPaymentNetwork(beforeLast)) {
+      currentMovement.network = beforeLast;
+      currentMovement.debit = last;
+    } else {
+      currentMovement.network = null;
+      currentMovement.debit = last;
+    }
 
     allMovements.push(currentMovement);
     currentMovement = null;
@@ -293,7 +328,7 @@ const extractMovements = (
  *
  * @param { ArraySlider } arraySlider
  * */
-const extractAndAdvanceNextRow = (arraySlider) => {
+const extractAndAdvanceToNextRow = (arraySlider) => {
   let row = [];
   let currentText;
 
@@ -351,9 +386,4 @@ const extractStatement = (arraySlider) => {
       }
     );
   });
-
-  // pdfParser.loadPDF("./data/EXT  AUTONOMO CARTAO (DOC 202300001).pdf");
-  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023002_both.pdf");
-  pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023003_both.pdf");
-  // pdfParser.loadPDF("./data/EXTRATO COMBINADO 2023004_simple.pdf");
 })(process.argv);
