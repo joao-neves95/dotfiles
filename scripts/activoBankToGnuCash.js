@@ -122,14 +122,18 @@ const isTableEnd = (value) => {
 
 /** @param { ArraySlider } arraySlider */
 const isNextElementRowEnd = (arraySlider) => {
+  const currentPlus1 =
+    arraySlider.array[arraySlider.currentIndex + 1].split("/");
+  const currentPlus2 =
+    arraySlider.array[arraySlider.currentIndex + 2].split("/");
+
   return (
     // Next 2 columns are dates.
-    (isStrANumLeftPaddedWith1Digit(
-      arraySlider.array[arraySlider.currentIndex + 1].split("/")[0]
-    ) &&
-      isStrANumLeftPaddedWith1Digit(
-        arraySlider.array[arraySlider.currentIndex + 2].split("/")[0]
-      )) ||
+    (isStrANumLeftPaddedWith1Digit(currentPlus1[0]) &&
+      isStrANumLeftPaddedWith1Digit(currentPlus2[0]) &&
+      // TODO: Review this. Is it possible that a transaction takes place in one month and the bank processes it in the next? (e.g. day 31)
+      // Execution dates are in the same month.
+      currentPlus1[0] === currentPlus2[0]) ||
     isTableEnd(arraySlider.array[arraySlider.currentIndex + 1])
   );
 };
@@ -234,14 +238,10 @@ const extractMovements = (
 
   const allMovements = [];
 
-  /** @type { number } */
-  let iCol;
   /** @type { string[] } */
   let currentRow;
   /** @type { AccountMovement } */
   let currentMovement;
-  /** @type { string } */
-  let currentText;
 
   for (
     ;
@@ -267,9 +267,9 @@ const extractMovements = (
     let iCol = 2;
     while (
       !isStrPaymentNetwork(currentRow[iCol]) &&
-      iCol === currentRow.length - 1
+      iCol < currentRow.length - 1
     ) {
-      currentMovement.description += currentRow[iCol];
+      currentMovement.description += " " + currentRow[iCol];
       ++iCol;
     }
 
