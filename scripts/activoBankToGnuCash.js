@@ -297,10 +297,11 @@ const extractCurrentPageMovements = (
     let iCol = 2;
     while (
       !isStrPaymentNetwork(currentRow[iCol]) &&
-      iCol < currentRow.length - 1
+      iCol < currentRow.length - 2
     ) {
       currentMovement.description +=
         (iCol !== 2 ? spaceString : emptyString) + currentRow[iCol];
+
       ++iCol;
     }
 
