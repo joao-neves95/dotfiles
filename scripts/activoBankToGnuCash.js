@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { log } from "node:console";
 import { extname, join as pathJoin } from "node:path";
 
@@ -372,7 +372,7 @@ const extractStatement = (arraySlider) => {
  *
  * @param { AccountMovement[] } allMovements
  */
-const jsonToGnuCashCsv = (allMovements) => {
+const accountMovementsToGnuCashCsv = (allMovements) => {
   return ["Date,Deposit,Description"]
     .concat(
       allMovements.map(
@@ -387,11 +387,17 @@ const jsonToGnuCashCsv = (allMovements) => {
 
 (function main(args) {
   if (args.length < 3) {
-    console.error("Arguments are invalid, the path is required.");
+    console.error("Invalid arguments. The path is required.");
 
     return;
   } else if (extname(args[2]) !== ".pdf") {
-    console.error("The file argument is invalid, the file must be a PDF.");
+    console.error("Invalid PDF file.");
+
+    return;
+  }
+
+  if (!existsSync(args[2])) {
+    console.error("The PDF file does not exist.");
 
     return;
   }
@@ -408,7 +414,7 @@ const jsonToGnuCashCsv = (allMovements) => {
     let dataSlider = new ArraySlider(textsArray);
     dataSlider = extractStatement(dataSlider);
 
-    const parsedCsv = jsonToGnuCashCsv(dataSlider.returnData);
+    const parsedCsv = accountMovementsToGnuCashCsv(dataSlider.returnData);
 
     writeFileSync(pathJoin("data", "movements.csv"), parsedCsv, {
       encoding: "utf8",
