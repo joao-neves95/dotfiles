@@ -376,7 +376,10 @@ const jsonToGnuCashCsv = (allMovements) => {
   return ["Date,Deposit,Description"]
     .concat(
       allMovements.map(
-        (move) => `${move.movementDate},${move.debit},${move.description}`
+        (move) =>
+          `${move.movementDate},${
+            move.debit > 0 ? `-${move.debit}` : move.credit
+          },"${move.description}"`
       )
     )
     .join("\n");
