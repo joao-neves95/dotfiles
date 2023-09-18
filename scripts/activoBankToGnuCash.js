@@ -112,11 +112,17 @@ class ArraySlider {
 }
 
 class AccountMovement {
+  /** { @type string } */
   movementDate;
+  /** { @type string } */
   processingDate;
+  /** { @type string } */
   description;
+  /** { @type string } */
   network;
+  /** { @type number | null } */
   debit;
+  /** { @type number | null } */
   credit;
 }
 
@@ -293,6 +299,7 @@ const extractCurrentPageMovements = (
     currentMovement.movementDate = normalizeDate(currentRow[0]);
     currentMovement.processingDate = normalizeDate(currentRow[1]);
 
+    // If too big, the description is split into multiple PDF columns.
     currentMovement.description = "";
     let iCol = 2;
     while (
@@ -309,17 +316,25 @@ const extractCurrentPageMovements = (
       currentMovement.description
     );
 
-    const beforeLast = currentRow[currentRow.length - 2];
-    const last = currentRow[currentRow.length - 1];
-    if (isStrPaymentNetwork(last)) {
-      currentMovement.network = last;
-      currentMovement.debit = beforeLast;
-    } else if (isStrPaymentNetwork(beforeLast)) {
-      currentMovement.network = beforeLast;
-      currentMovement.debit = last;
+    const itsARefund = currentMovement.description.startsWith('Devol. ');
+    const beforeLastColumn = currentRow[currentRow.length - 2];
+    const lastColumn = currentRow[currentRow.length - 1];
+
+    if (isStrPaymentNetwork(lastColumn)) {
+      currentMovement.network = lastColumn;
+      currentMovement.debit = parseFloat(beforeLastColumn);
+    } else if (isStrPaymentNetwork(beforeLastColumn)) {
+      currentMovement.network = beforeLastColumn;
+      currentMovement.debit = parseFloat(lastColumn);
     } else {
+      // Fees/taxes do not have network.
       currentMovement.network = null;
-      currentMovement.debit = last;
+      currentMovement.debit = parseFloat(lastColumn);
+    }
+
+    if (itsARefund) {
+      currentMovement.credit = currentMovement.debit;
+      currentMovement.debit = 0;
     }
 
     allMovements.push(currentMovement);
