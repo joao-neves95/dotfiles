@@ -84,14 +84,4 @@ autocmd BufWritePre * :%s/\s\+$//e
 :tnoremap <Esc> <C-\><C-n>
 """
 
-""" PLUGINS (Packer)
-lua require('plugins')
-lua require('keymaps')
-
-" Compile with Packer after the plugins file gets updated.
-augroup packer_user_config
-  autocmd!
-  autocmd BufWritePost plugins.lua source <afile> | PackerSync | PackerCompile profile=true
-augroup end
-"
-"""
+lua require('init')

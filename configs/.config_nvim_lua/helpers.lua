@@ -1,5 +1,5 @@
 Execute = vim.api.nvim_command
-Keymap = vim.api.nvim_set_keymap
+Keymap = vim.keymap.set
 
 function DefaultKeymapOpts(description)
   local opts = { noremap = true, silent = true }
