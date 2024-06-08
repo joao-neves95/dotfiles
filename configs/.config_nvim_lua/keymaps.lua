@@ -25,4 +25,9 @@ Keymap({'n', 'x'}, '<C-c>', '"+y', DefaultKeymapOpts('Copy from clipboard'))
 Keymap({'n', 'x'}, '<C-v>', '"+p', DefaultKeymapOpts('Paste  from clipboard'))
 --
 
+require("which-key").register({ ["<leader>"] = { n = {
+    name = "Neovim",
+  },
+} })
+
 Keymap('n', '<leader>nh', ':checkhealth<CR>', DefaultKeymapOpts('Check health'))

@@ -63,6 +63,34 @@ require('packer').startup({
     }
 
     use {
+      'nvim-telescope/telescope.nvim', tag = '0.1.x',
+      requires = { {'nvim-lua/plenary.nvim'} },
+      config = function()
+        local builtin = require('telescope.builtin')
+
+        wk.register({ ["<leader>"] = {
+          f = {
+            name = "Find",
+          },
+        } })
+
+        Keymap('n', '<leader>ff', builtin.find_files, DefaultKeymapOpts('Find in all files'))
+        Keymap('n', '<C-f>', builtin.git_files, DefaultKeymapOpts('Find in git files'))
+        Keymap('n', '<leader>fl', builtin.live_grep, DefaultKeymapOpts('Live search'))
+        Keymap('n', '<leader>fb', builtin.buffers, DefaultKeymapOpts())
+        Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts())
+      end,
+    }
+
+    use {
+      'mbbill/undotree',
+      config = function()
+        Keymap('n', '<leader>u', vim.cmd.UndotreeToggle, DefaultKeymapOpts('Toggle Undotree'))
+      end,
+    }
+
+    use {
+      -- (tabs)
       -- https://github.com/akinsho/bufferline.nvim
       'akinsho/bufferline.nvim',
       requires = 'kyazdani42/nvim-web-devicons',
@@ -113,7 +141,15 @@ require('packer').startup({
       -- https://github.com/nvim-treesitter/nvim-treesitter
       'nvim-treesitter/nvim-treesitter',
       run = function()
-        local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+        require('nvim-treesitter.configs').setup({
+          auto_install = true,
+          highlight = {
+            enable = true,
+          },
+          ensure_installed = { "all" },
+        })
+
+        local ts_update = require('nvim-treesitter.install').update()
         ts_update()
       end,
     }
@@ -124,6 +160,7 @@ require('packer').startup({
         require('Comment').setup {
           opleader = {
             line = '/',
+            block = '/',
           }
         }
       end,
