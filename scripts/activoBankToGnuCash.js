@@ -300,7 +300,7 @@ const extractCurrentPageMovements = (
     currentMovement.processingDate = normalizeDate(currentRow[1]);
 
     // If too big, the description is split into multiple PDF columns.
-    currentMovement.description = "";
+    currentMovement.description = emptyString;
     let iCol = 2;
     while (
       !isStrPaymentNetwork(currentRow[iCol]) &&
@@ -316,7 +316,7 @@ const extractCurrentPageMovements = (
       currentMovement.description
     );
 
-    const itsARefund = currentMovement.description.startsWith('Devol. ');
+    const itsARefund = currentMovement.description.startsWith("Devol. ");
     const beforeLastColumn = currentRow[currentRow.length - 2];
     const lastColumn = currentRow[currentRow.length - 1];
 

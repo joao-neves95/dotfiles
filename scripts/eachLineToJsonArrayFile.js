@@ -3,7 +3,7 @@ import { dirname } from "path";
 
 const getFilePathFromArgs = (args) => {
   if (args.length < 3) {
-    console.error("Invalid arguments. The path is required.");
+    console.error("Invalid arguments. The file path is required.");
 
     return;
   } else if (!existsSync(args[2])) {

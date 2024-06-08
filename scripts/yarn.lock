@@ -9,7 +9,7 @@
 
 "neves.js@github:joao-neves95/neves.js":
   version "0.0.1"
-  resolved "https://codeload.github.com/joao-neves95/neves.js/tar.gz/020e3da50e670006fe287097f20d945568b68cb2"
+  resolved "https://codeload.github.com/joao-neves95/neves.js/tar.gz/441df44c557166c19cc953b95477f04796fa430e"
   dependencies:
     pdf2json "^2.0.2"
 
