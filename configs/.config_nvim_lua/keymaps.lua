@@ -22,7 +22,7 @@ Keymap('v', '<A-k>', ":m '<-2<CR>gv-gv", DefaultKeymapOpts('Move line up'))
 
 -- Copy/paste from clipboard
 Keymap({'n', 'x'}, '<C-c>', '"+y', DefaultKeymapOpts('Copy from clipboard'))
-Keymap({'n', 'x'}, '<C-v>', '"+p', DefaultKeymapOpts('Paste  from clipboard'))
+Keymap({'n', 'x'}, '<C-v>', '"+p', DefaultKeymapOpts('Paste from clipboard'))
 --
 
 require("which-key").register({ ["<leader>"] = { n = {

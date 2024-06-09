@@ -3,6 +3,7 @@
 
 require('helpers')
 require('lsp')
+require('snippets')
 require('theme')
 
 -- Auto-install Packer if needed.
@@ -20,12 +21,26 @@ vim.cmd('packadd packer.nvim')
 
 require('packer').startup({
   function(use)
+
+    use {
+      'folke/which-key.nvim',
+      config = function()
+        -- TODO: Add keymap for .
+        require("which-key").setup()
+      end,
+    }
+
+    --[[ use {
+      '',
+      config = function()
+      end,
+    } ]]
+
     -- https://github.com/wbthomason/packer.nvim
     use {
       'wbthomason/packer.nvim',
       config = function()
         local wk = require("which-key")
-
         wk.register({ ["<leader>"] = {
           p = {
             name = "Packer",
@@ -38,14 +53,6 @@ require('packer').startup({
         Keymap('n', '<leader>pu', ':PackerUpdate<CR>', DefaultKeymapOpts('Update'))
         Keymap('n', '<leader>pc', ':PackerCompile<CR>', DefaultKeymapOpts('Compile'))
         Keymap('n', '<leader>ps', ':PackerSync<CR>', DefaultKeymapOpts('Sync'))
-      end,
-    }
-    -- TODO: Add keymap for .
-
-    use {
-      'folke/which-key.nvim',
-      config = function()
-        require("which-key").setup()
       end,
     }
 
@@ -68,6 +75,7 @@ require('packer').startup({
       config = function()
         local builtin = require('telescope.builtin')
 
+        local wk = require("which-key")
         wk.register({ ["<leader>"] = {
           f = {
             name = "Find",
@@ -76,9 +84,10 @@ require('packer').startup({
 
         Keymap('n', '<leader>ff', builtin.find_files, DefaultKeymapOpts('Find in all files'))
         Keymap('n', '<C-f>', builtin.git_files, DefaultKeymapOpts('Find in git files'))
+        Keymap('n', '<leader>fl', builtin.git_files, DefaultKeymapOpts('Find in git files'))
         Keymap('n', '<leader>fl', builtin.live_grep, DefaultKeymapOpts('Live search'))
-        Keymap('n', '<leader>fb', builtin.buffers, DefaultKeymapOpts())
-        Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts())
+        Keymap('n', '<leader>fb', builtin.buffers, DefaultKeymapOpts('Find in buffers'))
+        Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts('Helper tags'))
       end,
     }
 
@@ -146,11 +155,18 @@ require('packer').startup({
           highlight = {
             enable = true,
           },
-          ensure_installed = { "all" },
+          ensure_installed = "all",
         })
 
         local ts_update = require('nvim-treesitter.install').update()
         ts_update()
+      end,
+    }
+
+    use {
+      'lewis6991/gitsigns.nvim',
+      config = function()
+        require('gitsigns').setup()
       end,
     }
 
@@ -163,6 +179,14 @@ require('packer').startup({
             block = '/',
           }
         }
+      end,
+    }
+
+    use {
+      "windwp/nvim-autopairs",
+      event = "InsertEnter",
+      config = function()
+        require("nvim-autopairs").setup {}
       end,
     }
 
@@ -189,7 +213,23 @@ require('packer').startup({
     }
 
     LspSetup(use)
+    SnippetsSetup(use)
     SetTheme(use, 'neon')
+
+    use {
+      'eandrju/cellular-automaton.nvim',
+      config = function()
+        local wk = require("which-key")
+        wk.register({ ["<leader>"] = {
+          x = {
+            name = "Useless",
+          },
+        } })
+
+        Keymap('n', '<leader>xr', '<cmd>CellularAutomaton make_it_rain<CR>', DefaultKeymapOpts('CellularAutomaton - Rain'))
+        Keymap('n', '<leader>xg', '<cmd>CellularAutomaton game_of_life<CR>', DefaultKeymapOpts('CellularAutomaton - Game of Life'))
+      end,
+    }
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
