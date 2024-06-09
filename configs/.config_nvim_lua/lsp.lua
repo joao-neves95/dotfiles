@@ -133,7 +133,7 @@ function LspSetup(use)
 
       cmp.setup({
         sources = cmp.config.sources({
-          { name = 'nvim-lsp' },
+          { name = 'nvim_lsp' },
           { name = 'luasnip' },
         },
         {
@@ -145,10 +145,10 @@ function LspSetup(use)
           end,
         },
         mapping = cmp.mapping.preset.insert({
-          ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-          ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-          ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-          ["<C-Space>"] = cmp.mapping.complete(),
+          ['<tab>'] = cmp.mapping.select_next_item(cmp_select),
+          ['<S-tab>'] = cmp.mapping.select_prev_item(cmp_select),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ["<C-space>"] = cmp.mapping.complete(),
         }),
       })
     end,

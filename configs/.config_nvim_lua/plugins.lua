@@ -2,6 +2,7 @@
 ---- https://dotfyle.com
 
 require('helpers')
+require('code_edit')
 require('lsp')
 require('snippets')
 require('theme')
@@ -171,26 +172,6 @@ require('packer').startup({
     }
 
     use {
-      'numToStr/Comment.nvim',
-      config = function()
-        require('Comment').setup {
-          opleader = {
-            line = '/',
-            block = '/',
-          }
-        }
-      end,
-    }
-
-    use {
-      "windwp/nvim-autopairs",
-      event = "InsertEnter",
-      config = function()
-        require("nvim-autopairs").setup {}
-      end,
-    }
-
-    use {
       -- https://github.com/weilbith/nvim-code-action-menu
       'weilbith/nvim-code-action-menu',
       config = function()
@@ -212,6 +193,7 @@ require('packer').startup({
       end,
     }
 
+    CodeEditSetup(use)
     LspSetup(use)
     SnippetsSetup(use)
     SetTheme(use, 'neon')
