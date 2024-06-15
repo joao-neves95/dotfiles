@@ -85,6 +85,7 @@ require('packer').startup({
 
         Keymap('n', '<leader>ff', builtin.find_files, DefaultKeymapOpts('Find in all files'))
         Keymap('n', '<C-f>', builtin.git_files, DefaultKeymapOpts('Find in git files'))
+        Keymap('n', 'leader>fg', builtin.git_files, DefaultKeymapOpts('Find in git files'))
         Keymap('n', '<leader>fl', builtin.git_files, DefaultKeymapOpts('Find in git files'))
         Keymap('n', '<leader>fl', builtin.live_grep, DefaultKeymapOpts('Live search'))
         Keymap('n', '<leader>fb', builtin.buffers, DefaultKeymapOpts('Find in buffers'))

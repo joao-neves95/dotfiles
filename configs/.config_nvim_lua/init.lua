@@ -1,5 +1,5 @@
 require('plugins')
-require('keymaps')
+require('global-keymaps')
 
 vim.cmd([[
   augroup packer_user_config

@@ -5,7 +5,7 @@ function CodeEditSetup(use)
         require('Comment').setup {
           opleader = {
             line = '/',
-            block = '/',
+            block = 'b',
           }
         }
       end,

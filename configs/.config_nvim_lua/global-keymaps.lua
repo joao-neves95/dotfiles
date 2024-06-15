@@ -13,6 +13,16 @@ Keymap('n', '<C-k>', '<C-w>k', DefaultKeymapOpts())
 Keymap('n', '<C-l>', '<C-w>l', DefaultKeymapOpts())
 --
 
+-- Buffer movement
+require("which-key").register({ ["<leader>"] = { b = {
+    name = "Buffer",
+  },
+} })
+
+Keymap('n', '<leader>bc', ':bprevious <bar> :bdelete #<CR>', DefaultKeymapOpts('Close Buffer'))
+Keymap('n', '<leader>bp', ':bprevious <bar>', DefaultKeymapOpts('Previous Buffer'))
+--
+
 -- Move lines
 Keymap('n', '<A-j>', ':m .+1<CR>==', DefaultKeymapOpts('Move line up'))
 Keymap('v', '<A-j>', ":m '>+1<CR>gv-gv", DefaultKeymapOpts('Move line up'))
