@@ -4,8 +4,8 @@ function CodeEditSetup(use)
       config = function()
         require('Comment').setup {
           opleader = {
-            line = '/',
-            block = 'b',
+            line = '<leader>/',
+            block = '<leader>#',
           }
         }
       end,
