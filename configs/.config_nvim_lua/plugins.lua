@@ -5,6 +5,7 @@ require('helpers')
 require('code_edit')
 require('lsp')
 require('snippets')
+require('tests')
 require('theme')
 
 -- Auto-install Packer if needed.
@@ -26,7 +27,6 @@ require('packer').startup({
     use {
       'folke/which-key.nvim',
       config = function()
-        -- TODO: Add keymap for .
         require("which-key").setup()
       end,
     }
@@ -196,6 +196,7 @@ require('packer').startup({
 
     CodeEditSetup(use)
     LspSetup(use)
+    -- TestsSetup(use)
     SnippetsSetup(use)
     SetTheme(use, 'neon')
 
