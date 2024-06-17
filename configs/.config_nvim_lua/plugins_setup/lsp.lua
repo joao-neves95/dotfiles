@@ -81,7 +81,7 @@ function LspSetup(use)
   }
 
   use {
-    -- https://github.com/
+    -- https://github.com/j-hui/fidget.nvim
     "j-hui/fidget.nvim",
     config = function()
       require("fidget").setup({})
@@ -89,10 +89,10 @@ function LspSetup(use)
   }
 
   use {
-    -- https://github.com/mfussenegger/nvim-dap
-    "mfussenegger/nvim-dap",
+    -- https://github.com/SmiteshP/nvim-navic
+    "SmiteshP/nvim-navic",
+    requires = "neovim/nvim-lspconfig"
   }
-
 
   use {
     -- https://github.com/jose-elias-alvarez/null-ls.nvim
@@ -117,10 +117,18 @@ function LspSetup(use)
         vim.lsp.protocol.make_client_capabilities(),
         cmp_lsp.default_capabilities())
 
+      -- TODO: Setup https://github.com/SmiteshP/nvim-navbuddy
+      local navic = require("nvim-navic")
+
       require("mason-lspconfig").setup_handlers {
         function(server_name)
           require("lspconfig")[server_name].setup {
-            capabilities = capabilities
+            capabilities = capabilities,
+            on_attach = function (client, bufnr)
+              if client.server_capabilities.documentSymbolProvider then
+                navic.attach(client, bufnr)
+              end
+            end
           }
         end
       }
@@ -178,5 +186,53 @@ function LspSetup(use)
 
     end,
   }
+
+  use {
+    -- https://github.com/RRethy/vim-illuminate
+    'RRethy/vim-illuminate',
+    config = function()
+    end,
+  }
+
+  use {
+    -- https://github.com/weilbith/nvim-code-action-menu
+    'weilbith/nvim-code-action-menu',
+    config = function()
+      Keymap('n', '<leader>la', ':CodeActionMenu<CR>', DefaultKeymapOpts('Code action'))
+    end,
+  }
+
+  use {
+    -- https://github.com/kosayoda/nvim-lightbulb
+    'kosayoda/nvim-lightbulb',
+    event = "BufReadPre",
+    requires = 'antoinemadec/FixCursorHold.nvim',
+    config = function()
+      require('nvim-lightbulb').setup({
+        autocmd = {
+          enabled = true
+        }
+      })
+    end,
+  }
+
+   use {
+      'folke/trouble.nvim',
+      config = function()
+        local trouble = require("trouble")
+        trouble.setup()
+
+        Keymap('n', '<leader>llt', '<cmd>Trouble diagnostics toggle<cr>', DefaultKeymapOpts('Diagnostics'))
+        Keymap('n', '<leader>llb', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', DefaultKeymapOpts('Buffer Diagnostics'))
+        Keymap('n', '<leader>lls', '<cmd>Trouble symbols toggle focus=false<cr>', DefaultKeymapOpts('Toggle Symbols'))
+        Keymap('n', '<leader>llL', '<cmd>Trouble loclist toggle<cr>', DefaultKeymapOpts('Location List'))
+        Keymap('n', '<leader>llq', '<cmd>Trouble qflist toggle<cr>', DefaultKeymapOpts('Quickfix List'))
+        Keymap(
+          'n',
+          '<leader>lll',
+          '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+          DefaultKeymapOpts('Toggle LSP Definitions / references / ...'))
+      end,
+    }
 
 end

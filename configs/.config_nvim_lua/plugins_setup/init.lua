@@ -2,9 +2,14 @@
 ---- https://dotfyle.com
 
 require('helpers')
+require('plugins_setup.ide_interface')
 require('plugins_setup.code_edit')
+require('plugins_setup.syntax')
+require('plugins_setup.debugger')
 require('plugins_setup.lsp')
 require('plugins_setup.snippets')
+require('plugins_setup.search')
+require('plugins_setup.git')
 require('plugins_setup.tests')
 require('theme')
 
@@ -58,141 +63,22 @@ require('packer').startup({
       end,
     }
 
-    use {
-      -- https://github.com/nvim-tree/nvim-tree.lua
-      'nvim-tree/nvim-tree.lua',
-      requires = {
-        'kyazdani42/nvim-web-devicons', -- optional, for file icons
-      },
+    --[[ use {
+      'mbbill/undotree',
       config = function()
-        require("nvim-tree").setup()
-
-        Keymap('n', '<leader>e', ':NvimTreeToggle<CR>', DefaultKeymapOpts('Explorer'))
+        Keymap('n', '<leader>u', vim.cmd.UndotreeToggle, DefaultKeymapOpts('Toggle Undotree'))
       end,
-    }
+    } ]]
 
-    use {
-      'nvim-telescope/telescope.nvim', tag = '0.1.x',
-      requires = {
-        'nvim-lua/plenary.nvim',
-        'debugloop/telescope-undo.nvim',
-      },
-      config = function()
-        require('telescope').load_extension('undo')
-
-        Keymap('n', '<leader>u', "<cmd>Telescope undo<cr>", DefaultKeymapOpts('Undo Tree'))
-
-        local builtin = require('telescope.builtin')
-
-        local wk = require("which-key")
-        wk.register({ ["<leader>"] = {
-          f = {
-            name = "Find",
-          },
-        } })
-
-        Keymap('n', '<leader>ff', builtin.find_files, DefaultKeymapOpts('Find in all files'))
-        Keymap('n', '<C-f>', builtin.git_files, DefaultKeymapOpts('Find in git files'))
-        Keymap('n', 'leader>fg', builtin.git_files, DefaultKeymapOpts('Find in git files'))
-        Keymap('n', '<leader>fl', builtin.git_files, DefaultKeymapOpts('Find in git files'))
-        Keymap('n', '<leader>fl', builtin.live_grep, DefaultKeymapOpts('Live search'))
-        Keymap('n', '<leader>fb', builtin.buffers, DefaultKeymapOpts('Find in buffers'))
-        Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts('Helper tags'))
-      end,
-    }
-
-    use {
-      -- (tabs)
-      -- https://github.com/akinsho/bufferline.nvim
-      'akinsho/bufferline.nvim',
-      requires = 'kyazdani42/nvim-web-devicons',
-      config = function()
-        require("bufferline").setup()
-
-        -- Cycle buffers.
-        Keymap('n', '<S-h>', ':BufferLineCyclePrev<CR>', DefaultKeymapOpts())
-        Keymap('n', '<S-l>', ':BufferLineCycleNext<CR>', DefaultKeymapOpts())
-        -- Move the buffers.
-        Keymap('n', '<C-S-h>', ':BufferLineMovePrev<CR>', DefaultKeymapOpts())
-        Keymap('n', '<C-S-l>', ':BufferLineMoveNext<CR>', DefaultKeymapOpts())
-      end,
-    }
-
-    use {
-      -- https://github.com/nvim-lualine/lualine.nvim
-      'nvim-lualine/lualine.nvim',
-      requires = { 'kyazdani42/nvim-web-devicons', opt = true },
-      config = function()
-        require('lualine').setup {
-          options = {
-            theme = 'nord'
-          },
-        }
-      end,
-    }
-
-    -- use {
-    --   -- (no mouse support for now)
-    --   -- https://github.com/petertriho/nvim-scrollbar
-    --   "petertriho/nvim-scrollbar",
-    --   requires = { 'kevinhwang91/nvim-hlslens', opt = true },
-    --   config = function()
-    --     require("scrollbar").setup()
-    --     require("scrollbar.handlers.search").setup()
-    --   end
-    -- }
-    
-    use {
-      -- https://github.com/dstein64/nvim-scrollview
-      'dstein64/nvim-scrollview',
-      config = function()
-        require('scrollview').setup()
-      end,
-    }
-
-    use {
-      -- https://github.com/nvim-treesitter/nvim-treesitter
-      'nvim-treesitter/nvim-treesitter',
-      run = function()
-        require('nvim-treesitter.configs').setup({
-          auto_install = true,
-          highlight = {
-            enable = true,
-          },
-          ensure_installed = "all",
-        })
-
-        local ts_update = require('nvim-treesitter.install').update()
-        ts_update()
-      end,
-    }
-
-    use {
-      -- https://github.com/weilbith/nvim-code-action-menu
-      'weilbith/nvim-code-action-menu',
-      config = function()
-        Keymap('n', '<leader>la', ':CodeActionMenu<CR>', DefaultKeymapOpts('Code action'))
-      end,
-    }
-
-    use {
-      -- https://github.com/kosayoda/nvim-lightbulb
-      'kosayoda/nvim-lightbulb',
-      event = "BufReadPre",
-      requires = 'antoinemadec/FixCursorHold.nvim',
-      config = function()
-        require('nvim-lightbulb').setup({
-          autocmd = {
-            enabled = true
-          }
-        })
-      end,
-    }
-
+    IdeInterfaceSetup(use)
     CodeEditSetup(use)
+    SyntaxSetup(use)
     LspSetup(use)
-    --TestsSetup(use)
     SnippetsSetup(use)
+    SearchSetup(use)
+    DebuggerSetup(use)
+    GitSetup(use)
+    TestsSetup(use)
     SetTheme(use, 'neon')
 
     use {

@@ -13,6 +13,13 @@ Keymap('n', '<C-k>', '<C-w>k', DefaultKeymapOpts())
 Keymap('n', '<C-l>', '<C-w>l', DefaultKeymapOpts())
 --
 
+-- Window resizing
+Keymap('n', '<C-Up>', ':resize -2<CR>', DefaultKeymapOpts())
+Keymap('n', '<C-Down>', ':resize +2<CR>', DefaultKeymapOpts())
+Keymap('n', '<C-Left>', ':vertical resize -2<CR>', DefaultKeymapOpts())
+Keymap('n', '<C-Right>', ':vertical resize +2<CR>', DefaultKeymapOpts())
+--
+
 -- Buffer movement
 require("which-key").register({ ["<leader>"] = { b = {
     name = "Buffer",

@@ -11,6 +11,7 @@ function TestsSetup(use)
     },
     config = function ()
         local neotest = require("neotest")
+
         neotest.setup({
           adapters = {
             require("neotest-dotnet")({
@@ -47,14 +48,14 @@ function TestsSetup(use)
 
         local wk = require("which-key")
         wk.register({ ["<leader>"] = {
-          t = {
+          T = {
             name = "Neotest",
           },
         } })
 
-        Keymap('n', '<leader>tn', function() neotest.run.run() end, DefaultKeymapOpts('Run nearest test'))
-        Keymap('n', '<leader>td', function() neotest.run.run({strategy = "dap"}) end, DefaultKeymapOpts('Debug nearest test'))
-        Keymap('n', '<leader>tf', function() neotest.run.run(vim.fn.expand("%")) end, DefaultKeymapOpts('Run file'))
+        Keymap('n', '<leader>Tn', function() neotest.run.run() end, DefaultKeymapOpts('Run nearest test'))
+        Keymap('n', '<leader>Td', function() neotest.run.run({strategy = "dap"}) end, DefaultKeymapOpts('Debug nearest test'))
+        Keymap('n', '<leader>Tf', function() neotest.run.run(vim.fn.expand("%")) end, DefaultKeymapOpts('Run file'))
     end
   }
 end
