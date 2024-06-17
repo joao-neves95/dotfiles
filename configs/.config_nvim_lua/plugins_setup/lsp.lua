@@ -1,5 +1,5 @@
 require('helpers')
-require('lsp_attach')
+require('plugins_setup.lsp_attach')
 
 function LspSetup(use)
   use {

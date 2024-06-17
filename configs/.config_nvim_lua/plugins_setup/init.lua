@@ -2,10 +2,10 @@
 ---- https://dotfyle.com
 
 require('helpers')
-require('code_edit')
-require('lsp')
-require('snippets')
-require('tests')
+require('plugins_setup.code_edit')
+require('plugins_setup.lsp')
+require('plugins_setup.snippets')
+require('plugins_setup.tests')
 require('theme')
 
 -- Auto-install Packer if needed.
@@ -54,6 +54,7 @@ require('packer').startup({
         Keymap('n', '<leader>pu', ':PackerUpdate<CR>', DefaultKeymapOpts('Update'))
         Keymap('n', '<leader>pc', ':PackerCompile<CR>', DefaultKeymapOpts('Compile'))
         Keymap('n', '<leader>ps', ':PackerSync<CR>', DefaultKeymapOpts('Sync'))
+        Keymap('n', '<leader>pC', ':PackerClean<CR>', DefaultKeymapOpts('Clean'))
       end,
     }
 
@@ -72,8 +73,15 @@ require('packer').startup({
 
     use {
       'nvim-telescope/telescope.nvim', tag = '0.1.x',
-      requires = { {'nvim-lua/plenary.nvim'} },
+      requires = {
+        'nvim-lua/plenary.nvim',
+        'debugloop/telescope-undo.nvim',
+      },
       config = function()
+        require('telescope').load_extension('undo')
+
+        Keymap('n', '<leader>u', "<cmd>Telescope undo<cr>", DefaultKeymapOpts('Undo Tree'))
+
         local builtin = require('telescope.builtin')
 
         local wk = require("which-key")
@@ -90,13 +98,6 @@ require('packer').startup({
         Keymap('n', '<leader>fl', builtin.live_grep, DefaultKeymapOpts('Live search'))
         Keymap('n', '<leader>fb', builtin.buffers, DefaultKeymapOpts('Find in buffers'))
         Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts('Helper tags'))
-      end,
-    }
-
-    use {
-      'mbbill/undotree',
-      config = function()
-        Keymap('n', '<leader>u', vim.cmd.UndotreeToggle, DefaultKeymapOpts('Toggle Undotree'))
       end,
     }
 
@@ -140,6 +141,7 @@ require('packer').startup({
     --     require("scrollbar.handlers.search").setup()
     --   end
     -- }
+    
     use {
       -- https://github.com/dstein64/nvim-scrollview
       'dstein64/nvim-scrollview',
@@ -162,13 +164,6 @@ require('packer').startup({
 
         local ts_update = require('nvim-treesitter.install').update()
         ts_update()
-      end,
-    }
-
-    use {
-      'lewis6991/gitsigns.nvim',
-      config = function()
-        require('gitsigns').setup()
       end,
     }
 
@@ -196,7 +191,7 @@ require('packer').startup({
 
     CodeEditSetup(use)
     LspSetup(use)
-    -- TestsSetup(use)
+    --TestsSetup(use)
     SnippetsSetup(use)
     SetTheme(use, 'neon')
 

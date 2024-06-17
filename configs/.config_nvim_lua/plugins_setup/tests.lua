@@ -52,9 +52,9 @@ function TestsSetup(use)
           },
         } })
 
-        Keymap('n', '<leader>tn', neotest.run.run(), DefaultKeymapOpts('Run nearest test'))
-        Keymap('n', '<leader>td', neotest.run.run({strategy = "dap"}), DefaultKeymapOpts('Debug nearest test'))
-        Keymap('n', '<leader>tn', neotest.run.run(vim.fn.expand("%")), DefaultKeymapOpts('Run file'))
+        Keymap('n', '<leader>tn', function() neotest.run.run() end, DefaultKeymapOpts('Run nearest test'))
+        Keymap('n', '<leader>td', function() neotest.run.run({strategy = "dap"}) end, DefaultKeymapOpts('Debug nearest test'))
+        Keymap('n', '<leader>tf', function() neotest.run.run(vim.fn.expand("%")) end, DefaultKeymapOpts('Run file'))
     end
   }
 end

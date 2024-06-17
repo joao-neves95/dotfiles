@@ -1,10 +1,10 @@
-require('plugins')
-require('global-keymaps')
+require('plugins_setup')
+require('global_keymaps')
 
 vim.cmd([[
   augroup packer_user_config
     autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerSync | PackerCompile profile=true
+    autocmd BufWritePost plugins_setup/init.lua source <afile> | PackerSync | PackerCompile
   augroup end
 ]])
 
