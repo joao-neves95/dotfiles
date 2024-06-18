@@ -70,12 +70,24 @@ function IdeInterfaceSetup(use)
     }
 
     use {
+      'nvimdev/dashboard-nvim',
+      requires = {'nvim-tree/nvim-web-devicons'},
+      event = 'VimEnter',
+      config = function()
+        require('dashboard').setup {
+          -- config
+        }
+      end,
+    }
+
+    use {
+      -- https://github.com/akinsho/toggleterm.nvim
       'akinsho/toggleterm.nvim',
       tag = '*',
       config = function()
         require("toggleterm").setup()
         local Terminal  = require('toggleterm.terminal').Terminal
-        local lazygit_term = Terminal:new({ cmd = 'lazygit', hidden = true })
+        local lazygit_term = Terminal:new({ cmd = 'lazygit', hidden = true, direction = 'float' })
 
         local wk = require("which-key")
         wk.register({ ["<leader>"] = {
@@ -85,6 +97,7 @@ function IdeInterfaceSetup(use)
         } })
 
         Keymap('n', '<leader>th', ':ToggleTerm size=10 dir=~ direction=horizontal<CR>', DefaultKeymapOpts('Toggle Horizontal'))
+        Keymap('n', '<leader>tf', ':ToggleTerm dir=~ direction=float<CR>', DefaultKeymapOpts('Toggle Floating'))
         Keymap('n', '<leader>tv', ':ToggleTerm size=40 dir=~ direction=vertical<CR>', DefaultKeymapOpts('Toggle Vertical'))
         Keymap('n', '<leader>tg', function () lazygit_term:toggle() end, DefaultKeymapOpts('Toggle Lazygit'))
       end

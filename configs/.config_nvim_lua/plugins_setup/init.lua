@@ -1,6 +1,3 @@
--- Links
----- https://dotfyle.com
-
 require('helpers')
 require('plugins_setup.ide_interface')
 require('plugins_setup.code_edit')
@@ -42,6 +39,7 @@ require('packer').startup({
       end,
     } ]]
 
+    -- TODO: Migrate to https://github.com/folke/lazy.nvim
     -- https://github.com/wbthomason/packer.nvim
     use {
       'wbthomason/packer.nvim',
@@ -76,9 +74,9 @@ require('packer').startup({
     LspSetup(use)
     SnippetsSetup(use)
     SearchSetup(use)
-    DebuggerSetup(use)
+    -- DebuggerSetup(use)
     GitSetup(use)
-    TestsSetup(use)
+    -- TestsSetup(use)
     SetTheme(use, 'neon')
 
     use {

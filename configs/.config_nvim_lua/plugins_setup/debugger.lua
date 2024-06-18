@@ -74,4 +74,13 @@ function DebuggerSetup(use)
     end
   }
 
+  use {
+    -- https://github.com/theHamsta/nvim-dap-virtual-text
+    'theHamsta/nvim-dap-virtual-text',
+    requires = {'mfussenegger/nvim-dap', 'nvim-treesitter/nvim-treesitter'},
+    config = function ()
+      require("nvim-dap-virtual-text").setup()
+    end
+  }
+
 end
