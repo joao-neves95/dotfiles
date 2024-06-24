@@ -70,6 +70,14 @@ function IdeInterfaceSetup(use)
     }
 
     use {
+      -- https://github.com/lukas-reineke/indent-blankline.nvim
+      'lukas-reineke/indent-blankline.nvim',
+      config = function()
+        require('ibl').setup()
+      end,
+    }
+
+    use {
       'nvimdev/dashboard-nvim',
       requires = {'nvim-tree/nvim-web-devicons'},
       event = 'VimEnter',

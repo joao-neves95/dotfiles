@@ -2,50 +2,8 @@ require('helpers')
 require('plugins_setup.lsp_attach')
 
 function LspSetup(use)
-  use {
-    -- https://github.com/williamboman/mason.nvim
-    "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup()
-        local wk = require("which-key")
-        wk.register({ ["<leader>"] = {
-          l = {
-            name = "LSP",
-          },
-        } })
 
-        Keymap('n', '<leader>lI', ':Mason<CR>', DefaultKeymapOpts('Mason Info'))
-    end,
-  }
-
-  use {
-    -- https://github.com/neovim/nvim-lspconfig
-    'neovim/nvim-lspconfig',
-    config = function ()
-        -- See `:help vim.lsp.*` for documentation on any of the below functions
-        Keymap('n', 'K', vim.lsp.buf.hover, DefaultKeymapOpts('Symbol Info'))
-        Keymap('n', '<leader>lK', vim.lsp.buf.hover, DefaultKeymapOpts('Symbol Info'))
-        Keymap('n', 'gD', vim.lsp.buf.declaration, DefaultKeymapOpts('Goto Symbol Declaration'))
-        Keymap('n', '<leader>lD', vim.lsp.buf.declaration, DefaultKeymapOpts('Goto Symbol Declaration'))
-        Keymap('n', 'gd', vim.lsp.buf.definition, DefaultKeymapOpts('Goto Symbol Definition'))
-        Keymap('n', '<leader>ld', vim.lsp.buf.definition, DefaultKeymapOpts('Goto Symbol Definition'))
-        Keymap('n', 'gi', vim.lsp.buf.implementation, DefaultKeymapOpts('Goto Symbol Implementation'))
-        Keymap('n', '<leader>li', vim.lsp.buf.implementation, DefaultKeymapOpts('Goto Symbol Implementation'))
-        Keymap('n', '<leader>lr', vim.lsp.buf.references, DefaultKeymapOpts('Symbol References'))
-        Keymap('n', '<leader>lR', vim.lsp.buf.rename, DefaultKeymapOpts('Rename Symbol'))
-        Keymap('n', '<leader>lR', vim.lsp.buf.format, DefaultKeymapOpts('Format'))
-
-        -- Keymap('n', '<leader>lf', vim.lsp.buf.formatting, DefaultKeymapOpts('Format'))
-        -- vim.keymap.set('n', '<leader>lD', vim.lsp.buf.type_definition, bufopts)
-        -- vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, bufopts)
-
-        -- vim.keymap.set('n', '<S-k>', vim.lsp.buf.signature_help, bufopts)
-        --vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
-        --vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-    end
-  }
-
-  use {
+ use {
     -- https://github.com/hrsh7th/nvim-cmp
     "hrsh7th/cmp-nvim-lsp",
     config = function()
@@ -101,6 +59,49 @@ function LspSetup(use)
     config = function()
       require("null-ls").setup()
     end,
+  }
+
+  use {
+    -- https://github.com/williamboman/mason.nvim
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup()
+        local wk = require("which-key")
+        wk.register({ ["<leader>"] = {
+          l = {
+            name = "LSP",
+          },
+        } })
+
+        Keymap('n', '<leader>lI', ':Mason<CR>', DefaultKeymapOpts('Mason Info'))
+    end,
+  }
+
+  use {
+    -- https://github.com/neovim/nvim-lspconfig
+    'neovim/nvim-lspconfig',
+    config = function ()
+        -- See `:help vim.lsp.*` for documentation on any of the below functions
+        Keymap('n', 'K', vim.lsp.buf.hover, DefaultKeymapOpts('Symbol Info'))
+        Keymap('n', '<leader>lK', vim.lsp.buf.hover, DefaultKeymapOpts('Symbol Info'))
+        Keymap('n', 'gD', vim.lsp.buf.declaration, DefaultKeymapOpts('Goto Symbol Declaration'))
+        Keymap('n', '<leader>lD', vim.lsp.buf.declaration, DefaultKeymapOpts('Goto Symbol Declaration'))
+        Keymap('n', 'gd', vim.lsp.buf.definition, DefaultKeymapOpts('Goto Symbol Definition'))
+        Keymap('n', '<leader>ld', vim.lsp.buf.definition, DefaultKeymapOpts('Goto Symbol Definition'))
+        Keymap('n', 'gi', vim.lsp.buf.implementation, DefaultKeymapOpts('Goto Symbol Implementation'))
+        Keymap('n', '<leader>li', vim.lsp.buf.implementation, DefaultKeymapOpts('Goto Symbol Implementation'))
+        Keymap('n', '<leader>lr', vim.lsp.buf.references, DefaultKeymapOpts('Symbol References'))
+        Keymap('n', '<leader>lR', vim.lsp.buf.rename, DefaultKeymapOpts('Rename Symbol'))
+        Keymap('n', '<leader>lf', vim.lsp.buf.format, DefaultKeymapOpts('Format'))
+
+        -- Keymap('n', '<leader>lf', vim.lsp.buf.formatting, DefaultKeymapOpts('Format'))
+        -- vim.keymap.set('n', '<leader>lD', vim.lsp.buf.type_definition, bufopts)
+        -- vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, bufopts)
+
+        -- vim.keymap.set('n', '<S-k>', vim.lsp.buf.signature_help, bufopts)
+        --vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+        --vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+    end
   }
 
   use {
