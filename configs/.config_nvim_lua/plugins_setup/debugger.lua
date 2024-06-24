@@ -63,14 +63,7 @@ function DebuggerSetup(use)
   use {
     "jay-babu/mason-nvim-dap.nvim",
     config = function ()
-      local mason_nvim_dap = require('mason-nvim-dap')
-      require("mason-nvim-dap").setup({
-        handlers = {
-          function(config)
-            mason_nvim_dap.default_setup(config)
-          end
-        }
-      })
+      require("mason-nvim-dap").setup()
     end
   }
 
