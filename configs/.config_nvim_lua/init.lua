@@ -1,10 +1,15 @@
+require('helpers')
+
+RunNVimCmd("let mapleader = ' '")
+RunNVimCmd("let maplocalleader = ' '")
+
 require('plugins_setup')
-require('global_keymaps')
+require('lua.global_keymaps')
 
 vim.cmd([[
-  augroup packer_user_config
+  augroup lazy_user_config
     autocmd!
-    autocmd BufWritePost plugins_setup/init.lua source <afile> | PackerSync | PackerCompile
+    autocmd BufWritePost ./plugins_setup/init.lua source <afile> | LazySync
   augroup end
 ]])
 

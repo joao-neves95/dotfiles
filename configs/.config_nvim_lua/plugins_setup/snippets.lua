@@ -1,10 +1,13 @@
-function SnippetsSetup(use)
-  use {
-      'L3MON4D3/LuaSnip',
-      build = "make install_jsregexp",
-      requires = { "rafamadriz/friendly-snippets" },
-      config = function()
-          require("luasnip.loaders.from_vscode").lazy_load()
-      end,
+function SnippetsSetup()
+    return {
+        {
+            'L3MON4D3/LuaSnip',
+            dependencies = { "rafamadriz/friendly-snippets" },
+            build = "make install_jsregexp",
+            lazy = true,
+            config = function()
+                require("luasnip.loaders.from_vscode").lazy_load()
+            end,
+        }
     }
 end

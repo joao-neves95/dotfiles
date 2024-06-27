@@ -1,6 +1,7 @@
 require('helpers')
 
-Execute("let mapleader = ' '")
+RunNVimCmd("let mapleader = ' '")
+RunNVimCmd("let maplocalleader = ' '")
 Keymap('i', 'jf', '<Esc>', DefaultKeymapOpts('Exit insert mode'))
 Keymap('n', '<C-s>', ':w<CR>', DefaultKeymapOpts('Save'))
 Keymap('n', '<leader>w', ':w<CR>', DefaultKeymapOpts('Save'))
@@ -22,7 +23,7 @@ Keymap('n', '<C-Right>', ':vertical resize +2<CR>', DefaultKeymapOpts())
 
 -- Buffer movement
 require("which-key").register({ ["<leader>"] = { b = {
-    name = "Buffer",
+   name = "Buffer",
   },
 } })
 
@@ -43,8 +44,8 @@ Keymap({'n', 'x'}, '<C-v>', '"+p', DefaultKeymapOpts('Paste from clipboard'))
 --
 
 require("which-key").register({ ["<leader>"] = { n = {
-    name = "Neovim",
-  },
+   name = "Neovim",
+ },
 } })
 
 Keymap('n', '<leader>nh', ':checkhealth<CR>', DefaultKeymapOpts('Check health'))

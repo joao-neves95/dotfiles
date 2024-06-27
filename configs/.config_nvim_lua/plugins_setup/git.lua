@@ -1,8 +1,12 @@
-function GitSetup(use)
-  use {
-    'lewis6991/gitsigns.nvim',
-    config = function()
-      require('gitsigns').setup()
-    end,
-  }
+function GitSetup()
+    return {
+        {
+            'lewis6991/gitsigns.nvim',
+            lazy = true,
+            event = "BufEnter",
+            config = function()
+                require('gitsigns').setup()
+            end,
+        }
+    }
 end
