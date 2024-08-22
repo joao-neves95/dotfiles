@@ -12,20 +12,18 @@ function DefaultKeymapOpts(description)
     return opts
 end
 
+--- Registers a new leader key group.
+---
+---@param group_key string
+---@param group_name string
 function RegisterWhichKeyGroup(group_key, group_name)
-    local group_config = {}
-    group_config[group_key] = {
-        name = group_name,
-    }
-
-    require("which-key").register({
-        ["<leader>"] = group_config
-    })
+    -- Docs: https://github.com/folke/which-key.nvim
+    require("which-key").add({ "<leader>" .. group_key, group = group_name })
 end
 
 ---
 --- Extend a table to be able to use overleaded operators.
---- Add: `Extend(my_table) + another_table + yet_another_table`
+--- Add: `Extend(my_table) + another_table + yet_another_table`.
 ---
 ---@param _table table
 ---@return table
