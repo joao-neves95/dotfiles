@@ -11,6 +11,7 @@ function SearchSetup()
             config = function()
                 require('telescope').load_extension('undo')
                 require('telescope').load_extension('projects')
+                require('telescope').load_extension('bookmarks')
 
                 Keymap('n', '<leader>u', "<cmd>Telescope undo<cr>", DefaultKeymapOpts('Undo Tree'))
 
@@ -25,6 +26,45 @@ function SearchSetup()
                 Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts('Helper tags'))
 
                 Keymap('n', '<leader>fp', builtin.help_tags, DefaultKeymapOpts('Projects'))
+            end,
+        },
+
+        {
+            -- https://github.com/tomasky/bookmarks.nvim
+            'tomasky/bookmarks.nvim',
+            -- lazy = true,
+            event = 'VimEnter',
+            config = function()
+                require('bookmarks').setup(
+                    {
+                        -- sign_priority = 8,  --set bookmark sign priority to cover other sign
+                        save_file = vim.fn.expand "$HOME/.local/state/.bookmarks", -- bookmarks save file path
+                        keywords = {
+                            ["@t"] = "✅ ", -- mark annotation startswith @t ,signs this icon as `Todo`
+                            ["@w"] = "⚠️ ", -- mark annotation startswith @w ,signs this icon as `Warn`
+                            ["@f"] = "🪛", -- mark annotation startswith @f ,signs this icon as `Fix`
+                            ["@n"] = "📝", -- mark annotation startswith @n ,signs this icon as `Note`
+                            ["@l"] = "📍", -- mark annotation startswith @n ,signs this icon as `Note`
+                        },
+                        on_attach = function(bufnr)
+                            local bm = require "bookmarks"
+
+                            Keymap('n', '<leader>fbb', bm.bookmark_toggle,
+                                DefaultKeymapOpts('Add or remove bookmark at current line'))
+                            Keymap('n', '<leader>fbi', bm.bookmark_ann,
+                                DefaultKeymapOpts('Add or edit mark annotation at current line'))
+                            Keymap('n', '<leader>fbc', bm.bookmark_clean,
+                                DefaultKeymapOpts('Clean all marks in local buffer'))
+                            Keymap('n', '<leader>fbn', bm.bookmark_next,
+                                DefaultKeymapOpts('Jump to next mark in local buffer'))
+                            Keymap('n', '<leader>fbp', bm.bookmark_prev,
+                                DefaultKeymapOpts('Jump to previous mark in local buffer'))
+                            Keymap('n', '<leader>fbl', bm.bookmark_list,
+                                DefaultKeymapOpts('Show marked file list in quickfix window'))
+                            Keymap('n', '<leader>fbx', bm.bookmark_clear_all, DefaultKeymapOpts('Removes all bookmarks'))
+                        end
+                    }
+                )
             end,
         },
 
