@@ -1,4 +1,7 @@
 alias cls="clear"
-alias lsa="ls -a"
 alias cd..='cd ..'
-alias cdu='cd ~'
+alias cdh='cd ~'
+alias lsa="ls -a"
+
+alias gitp='git push'
+alias gitpnv='git push --no-verify'
