@@ -4,7 +4,7 @@ RunNVimCmd("let mapleader = ' '")
 RunNVimCmd("let maplocalleader = ' '")
 
 require('plugins_setup')
-require('lua.global_keymaps')
+require('global_keymaps')
 
 vim.cmd([[
   augroup lazy_user_config
