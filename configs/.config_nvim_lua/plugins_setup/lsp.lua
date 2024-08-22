@@ -78,19 +78,6 @@ function LspSetup()
         },
 
         {
-            -- https://github.com/williamboman/mason.nvim
-            "williamboman/mason.nvim",
-            lazy = true,
-            event = 'VimEnter',
-            config = function()
-                require("mason").setup()
-
-                RegisterWhichKeyGroup('l', 'LSP')
-                Keymap('n', '<leader>lI', ':Mason<CR>', DefaultKeymapOpts('Mason Info'))
-            end,
-        },
-
-        {
             -- https://github.com/neovim/nvim-lspconfig
             'neovim/nvim-lspconfig',
             lazy = true,
@@ -117,6 +104,18 @@ function LspSetup()
                 --vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
                 --vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
             end
+        },
+
+        {
+            -- https://github.com/williamboman/mason.nvim
+            "williamboman/mason.nvim",
+            lazy = true,
+            event = 'VimEnter',
+            config = function()
+                require("mason").setup()
+
+                Keymap('n', '<leader>pI', ':Mason<CR>', DefaultKeymapOpts('Mason Info'))
+            end,
         },
 
         {
@@ -165,7 +164,7 @@ function LspSetup()
                 -- Mappings.
                 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
                 --[[ vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, DefaultKeymapOpts())
-      -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, DefaultKeymapOpts()) ]]
+                -- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, DefaultKeymapOpts()) ]]
                 -- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, DefaultKeymapOpts())
                 -- vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, DefaultKeymapOpts())
             end,

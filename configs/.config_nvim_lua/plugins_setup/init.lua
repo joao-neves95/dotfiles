@@ -1,7 +1,6 @@
 require('helpers')
 require('plugins_setup.theme')
 require('plugins_setup.ide_interface')
-require('plugins_setup.git')
 require('plugins_setup.code_edit')
 require('plugins_setup.syntax')
 require('plugins_setup.lsp')
@@ -28,8 +27,6 @@ vim.opt.rtp:prepend(lazypath)
 ---
 
 function RegisterLazyKeymaps()
-    RegisterWhichKeyGroup('p', 'Packages')
-
     Keymap('n', '<leader>ph', '<cmd>:Lazy home<CR>', DefaultKeymapOpts('Lazy - Home'))
     Keymap('n', '<leader>pp', '<cmd>:Lazy profile<CR>', DefaultKeymapOpts('Lazy - Profiling'))
     Keymap('n', '<leader>pu', '<cmd>:Lazy update<CR>', DefaultKeymapOpts('Lazy - Update'))
@@ -43,7 +40,7 @@ end
 local plugins_spec = ExtendTable(
     {{
         'folke/which-key.nvim',
-        lazy = false,
+        event = "VeryLazy",
         config = function()
             require("which-key").setup()
 
@@ -52,7 +49,6 @@ local plugins_spec = ExtendTable(
     }})
     + SetTheme('neon')
     + IdeInterfaceSetup()
-    + GitSetup()
     + CodeEditSetup()
     + SyntaxSetup()
     + LspSetup()
@@ -63,9 +59,8 @@ local plugins_spec = ExtendTable(
     + {{
         'eandrju/cellular-automaton.nvim',
         lazy = true,
+        event = "VeryLazy",
         config = function()
-            RegisterWhichKeyGroup('x', 'Useless')
-
             Keymap('n', '<leader>xr', '<cmd>CellularAutomaton make_it_rain<CR>', DefaultKeymapOpts('CellularAutomaton - Rain'))
             Keymap('n', '<leader>xg', '<cmd>CellularAutomaton game_of_life<CR>', DefaultKeymapOpts('CellularAutomaton - Game of Life'))
         end,

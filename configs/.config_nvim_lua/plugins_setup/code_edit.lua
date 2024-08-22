@@ -5,8 +5,6 @@ function CodeEditSetup()
             lazy = true,
             event = "BufEnter",
             config = function()
-                RegisterWhichKeyGroup('c', 'Comment')
-
                 require('Comment').setup {
                     toggler = {
                         line = '<leader>cc',

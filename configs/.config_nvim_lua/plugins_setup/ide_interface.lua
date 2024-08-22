@@ -81,7 +81,7 @@ function IdeInterfaceSetup()
             dependencies = { 'nvim-tree/nvim-web-devicons' },
             event = 'VimEnter',
             config = function()
-                require('dashboard').setup { }
+                require('dashboard').setup {}
             end,
         },
 
@@ -92,10 +92,8 @@ function IdeInterfaceSetup()
             event = 'VimEnter',
             config = function()
                 require("toggleterm").setup()
-                local Terminal     = require('toggleterm.terminal').Terminal
+                local Terminal = require('toggleterm.terminal').Terminal
                 local lazygit_term = Terminal:new({ cmd = 'lazygit', hidden = true, direction = 'float' })
-
-                RegisterWhichKeyGroup('t', 'Terminal')
 
                 Keymap('n', '<leader>th', ':ToggleTerm size=10 dir=~ direction=horizontal<CR>',
                     DefaultKeymapOpts('Toggle Horizontal'))
@@ -104,6 +102,17 @@ function IdeInterfaceSetup()
                     DefaultKeymapOpts('Toggle Vertical'))
                 Keymap('n', '<leader>tg', function() lazygit_term:toggle() end, DefaultKeymapOpts('Toggle Lazygit'))
             end
+        },
+
+        {
+            'lewis6991/gitsigns.nvim',
+            lazy = true,
+            event = "BufEnter",
+            config = function()
+                require('gitsigns').setup()
+            end,
         }
+
     }
 end
+

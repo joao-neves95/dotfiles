@@ -3,11 +3,11 @@ function SearchSetup()
         {
             'nvim-telescope/telescope.nvim',
             dependencies = {
-               'nvim-lua/plenary.nvim',
+                'nvim-lua/plenary.nvim',
                 'debugloop/telescope-undo.nvim',
             },
             lazy = true,
-            event = 'BufEnter',
+            event = 'VimEnter',
             config = function()
                 require('telescope').load_extension('undo')
                 require('telescope').load_extension('projects')
@@ -17,15 +17,17 @@ function SearchSetup()
 
                 local builtin = require('telescope.builtin')
 
-                RegisterWhichKeyGroup('f', 'Find')
                 Keymap('n', '<leader>ff', builtin.find_files, DefaultKeymapOpts('Find in all files'))
                 Keymap('n', 'leader>fg', builtin.git_files, DefaultKeymapOpts('Find in git files'))
                 Keymap('n', '<leader>fl', builtin.live_grep, DefaultKeymapOpts('Live search'))
                 Keymap('n', '<C-f>', builtin.live_grep, DefaultKeymapOpts('Live search'))
-                Keymap('n', '<leader>fb', builtin.buffers, DefaultKeymapOpts('Find in buffers'))
+                Keymap('n', '<leader>fa', builtin.buffers, DefaultKeymapOpts('Find in buffers'))
                 Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts('Helper tags'))
 
-                Keymap('n', '<leader>fp', builtin.help_tags, DefaultKeymapOpts('Projects'))
+                Keymap('n', '<leader>fp', require('telescope').extensions.projects.projects,
+                    DefaultKeymapOpts('In Projects'))
+                Keymap('n', '<leader>fB', require('telescope').extensions.bookmarks.list,
+                    DefaultKeymapOpts('In Bookmarks'))
             end,
         },
 
