@@ -111,8 +111,29 @@ function IdeInterfaceSetup()
             config = function()
                 require('gitsigns').setup()
             end,
-        }
+        },
 
+        {
+            -- Browser search
+            -- https://github.com/chrishrb/gx.nvim
+            'chrishrb/gx.nvim',
+            dependencies = { "nvim-lua/plenary.nvim" },
+            lazy = true,
+            event = "BufEnter",
+            cmd = { "Browse" },
+            init = function()
+                vim.g.netrw_nogx = 1 -- disable netrw gx
+            end,
+            submodules = false,
+            keys = {
+                { "gx", "<cmd>Browse<cr>", mode = { "n", "x" } },
+            },
+            config = function()
+                require("gx").setup()
+
+                RegisterWhichKeyKeyMap('n', '<leader>gl', ':normal gx<CR>', 'Open link under cursor')
+            end,
+        },
     }
 end
 
