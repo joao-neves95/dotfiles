@@ -13,20 +13,20 @@ function SearchSetup()
                 require('telescope').load_extension('projects')
                 require('telescope').load_extension('bookmarks')
 
-                Keymap('n', '<leader>u', "<cmd>Telescope undo<cr>", DefaultKeymapOpts('Undo Tree'))
+                Keymap('n', '<leader>eU', "<cmd>Telescope undo<cr>", DefaultKeymapOpts('Undo Tree'))
 
                 local builtin = require('telescope.builtin')
 
-                Keymap('n', '<leader>ff', builtin.find_files, DefaultKeymapOpts('Find in all files'))
-                Keymap('n', 'leader>fg', builtin.git_files, DefaultKeymapOpts('Find in git files'))
-                Keymap('n', '<leader>fl', builtin.live_grep, DefaultKeymapOpts('Live search'))
+                Keymap('n', '<leader>eff', builtin.find_files, DefaultKeymapOpts('Find file'))
+                Keymap('n', 'leader>efg', builtin.git_files, DefaultKeymapOpts('Find git files'))
+                Keymap('n', '<leader>efl', builtin.live_grep, DefaultKeymapOpts('Live Grep search'))
                 Keymap('n', '<C-f>', builtin.live_grep, DefaultKeymapOpts('Live search'))
-                Keymap('n', '<leader>fa', builtin.buffers, DefaultKeymapOpts('Find in buffers'))
-                Keymap('n', '<leader>fh', builtin.help_tags, DefaultKeymapOpts('Helper tags'))
+                Keymap('n', '<leader>efa', builtin.buffers, DefaultKeymapOpts('Find opened file'))
+                Keymap('n', '<leader>efh', builtin.help_tags, DefaultKeymapOpts('Helper tags'))
 
-                Keymap('n', '<leader>fp', require('telescope').extensions.projects.projects,
+                Keymap('n', '<leader>efp', require('telescope').extensions.projects.projects,
                     DefaultKeymapOpts('In Projects'))
-                Keymap('n', '<leader>fB', require('telescope').extensions.bookmarks.list,
+                Keymap('n', '<leader>efB', require('telescope').extensions.bookmarks.list,
                     DefaultKeymapOpts('In Bookmarks'))
             end,
         },
@@ -51,19 +51,19 @@ function SearchSetup()
                         on_attach = function(bufnr)
                             local bm = require "bookmarks"
 
-                            Keymap('n', '<leader>fbb', bm.bookmark_toggle,
+                            Keymap('n', '<leader>efbb', bm.bookmark_toggle,
                                 DefaultKeymapOpts('Add or remove bookmark at current line'))
-                            Keymap('n', '<leader>fbi', bm.bookmark_ann,
+                            Keymap('n', '<leader>efbi', bm.bookmark_ann,
                                 DefaultKeymapOpts('Add or edit mark annotation at current line'))
-                            Keymap('n', '<leader>fbc', bm.bookmark_clean,
+                            Keymap('n', '<leader>efbc', bm.bookmark_clean,
                                 DefaultKeymapOpts('Clean all marks in local buffer'))
-                            Keymap('n', '<leader>fbn', bm.bookmark_next,
+                            Keymap('n', '<leader>efbn', bm.bookmark_next,
                                 DefaultKeymapOpts('Jump to next mark in local buffer'))
-                            Keymap('n', '<leader>fbp', bm.bookmark_prev,
+                            Keymap('n', '<leader>efbp', bm.bookmark_prev,
                                 DefaultKeymapOpts('Jump to previous mark in local buffer'))
-                            Keymap('n', '<leader>fbl', bm.bookmark_list,
+                            Keymap('n', '<leader>efbl', bm.bookmark_list,
                                 DefaultKeymapOpts('Show marked file list in quickfix window'))
-                            Keymap('n', '<leader>fbx', bm.bookmark_clear_all, DefaultKeymapOpts('Removes all bookmarks'))
+                            Keymap('n', '<leader>efbx', bm.bookmark_clear_all, DefaultKeymapOpts('Removes all bookmarks'))
                         end
                     }
                 )

@@ -21,6 +21,22 @@ function RegisterWhichKeyGroup(group_key, group_name)
     require("which-key").add({ "<leader>" .. group_key, group = group_name })
 end
 
+--- Registers a WhichKey key map.
+---
+---@param mode string
+---@param key_map string
+---@param command string
+---@param description string
+function RegisterWhichKeyKeyMap(mode, key_map, command, description)
+    require("which-key").add({
+        key_map,
+        command,
+        desc = description,
+        mode = mode,
+        cond = func_condition
+    })
+end
+
 ---
 --- Extend a table to be able to use overleaded operators.
 --- Add: `Extend(my_table) + another_table + yet_another_table`.

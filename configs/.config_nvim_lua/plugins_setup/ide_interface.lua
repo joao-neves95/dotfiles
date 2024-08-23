@@ -10,8 +10,7 @@ function IdeInterfaceSetup()
             config = function()
                 require("nvim-tree").setup()
 
-                Keymap('n', '<leader>e', ':NvimTreeToggle<CR>', DefaultKeymapOpts('Explorer'))
-                Keymap('n', '?', function() require('nvim-tree.api').toggle_help() end, DefaultKeymapOpts('Help'))
+                Keymap('n', '<leader>E', ':NvimTreeToggle<CR>', DefaultKeymapOpts('Explorer'))
             end,
         },
 
@@ -136,4 +135,3 @@ function IdeInterfaceSetup()
         },
     }
 end
-
