@@ -45,12 +45,7 @@ function IdeInterfaceSetup()
                     }
                 })
 
-                -- Cycle buffers.
-                Keymap('n', '<S-h>', ':BufferLineCyclePrev<CR>', DefaultKeymapOpts())
-                Keymap('n', '<S-l>', ':BufferLineCycleNext<CR>', DefaultKeymapOpts())
-                -- Move the buffers.
-                Keymap('n', '<C-S-h>', ':BufferLineMovePrev<CR>', DefaultKeymapOpts())
-                Keymap('n', '<C-S-l>', ':BufferLineMoveNext<CR>', DefaultKeymapOpts())
+                SetupBufferlineKeymaps();
             end,
         },
 
@@ -94,12 +89,7 @@ function IdeInterfaceSetup()
                 local Terminal = require('toggleterm.terminal').Terminal
                 local lazygit_term = Terminal:new({ cmd = 'lazygit', hidden = true, direction = 'float' })
 
-                Keymap('n', '<leader>th', ':ToggleTerm size=10 dir=~ direction=horizontal<CR>',
-                    DefaultKeymapOpts('Toggle Horizontal'))
-                Keymap('n', '<leader>tf', ':ToggleTerm dir=~ direction=float<CR>', DefaultKeymapOpts('Toggle Floating'))
-                Keymap('n', '<leader>tv', ':ToggleTerm size=40 dir=~ direction=vertical<CR>',
-                    DefaultKeymapOpts('Toggle Vertical'))
-                Keymap('n', '<leader>tg', function() lazygit_term:toggle() end, DefaultKeymapOpts('Toggle Lazygit'))
+                SetupToggletermKeymaps(lazygit_term);
             end
         },
 
@@ -130,7 +120,7 @@ function IdeInterfaceSetup()
             config = function()
                 require("gx").setup()
 
-                RegisterWhichKeyKeyMap('n', '<leader>gl', ':normal gx<CR>', 'Open link under cursor')
+                SetupGxKeymaps();
             end,
         },
     }

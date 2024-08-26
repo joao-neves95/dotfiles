@@ -47,13 +47,7 @@ function CodeEditSetup()
             config = function()
                 require("dotnet").setup({})
 
-                RegisterWhichKeyGroup('ln', 'Dotnet')
-                Keymap('n', '<leader>lnn', ':DotnetUI new_item<cr>', DefaultKeymapOpts('Add new item template'))
-                Keymap('n', '<leader>lnf', ':DotnetUI file bootstrap<cr>', DefaultKeymapOpts('Add new cs file'))
-                Keymap('n', '<leader>lnp', ':DotnetUI project package add<cr>', DefaultKeymapOpts('Add a Nuget package'))
-                Keymap('n', '<leader>lnr', ':DotnetUI project package remove<cr>', DefaultKeymapOpts('Remove a Nuget package'))
-                Keymap('n', '<leader>lnP', ':DotnetUI project reference add<cr>', DefaultKeymapOpts('Add project reference'))
-                Keymap('n', '<leader>lnR', ':DotnetUI project package remove<cr>', DefaultKeymapOpts('Remove a project reference'))
+                SetupDotnetKeymaps();
             end,
         },
 

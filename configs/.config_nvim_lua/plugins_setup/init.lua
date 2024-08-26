@@ -1,4 +1,5 @@
 require('helpers')
+
 require('plugins_setup.theme')
 require('plugins_setup.ide_interface')
 require('plugins_setup.code_edit')
@@ -26,27 +27,16 @@ end
 vim.opt.rtp:prepend(lazypath)
 ---
 
-function RegisterLazyKeymaps()
-    Keymap('n', '<leader>ph', '<cmd>:Lazy home<CR>', DefaultKeymapOpts('Lazy - Home'))
-    Keymap('n', '<leader>pp', '<cmd>:Lazy profile<CR>', DefaultKeymapOpts('Lazy - Profiling'))
-    Keymap('n', '<leader>pu', '<cmd>:Lazy update<CR>', DefaultKeymapOpts('Lazy - Update'))
-    Keymap('n', '<leader>ps', '<cmd>:Lazy sync<CR>', DefaultKeymapOpts('Lazy - Sync'))
-    Keymap('n', '<leader>pc', '<cmd>:Lazy clean<CR>', DefaultKeymapOpts('Lazy - Clean'))
-    Keymap('n', '<leader>px', '<cmd>:Lazy clear<CR>', DefaultKeymapOpts('Lazy - Clear Tasks'))
-    Keymap('n', '<leader>pr', '<cmd>:Lazy restore<CR>', DefaultKeymapOpts('Lazy - Restore'))
-    Keymap('n', '<leader>pH', '<cmd>:Lazy health<CR>', DefaultKeymapOpts('Lazy - Health'))
-end
-
 local plugins_spec = ExtendTable(
-    {{
-        'folke/which-key.nvim',
-        event = "VeryLazy",
-        config = function()
-            require("which-key").setup()
+        { {
+            'folke/which-key.nvim',
+            event = "VeryLazy",
+            config = function()
+                require("which-key").setup()
 
-            RegisterLazyKeymaps()
-        end,
-    }})
+                SetupLazyKeymaps()
+            end,
+        } })
     + SetTheme('neon')
     + IdeInterfaceSetup()
     + CodeEditSetup()
@@ -56,17 +46,16 @@ local plugins_spec = ExtendTable(
     + SearchSetup()
     + DebuggerSetup()
     + TestsSetup()
-    + {{
+    + { {
         'eandrju/cellular-automaton.nvim',
         lazy = true,
         event = "VeryLazy",
         config = function()
-            Keymap('n', '<leader>xr', '<cmd>CellularAutomaton make_it_rain<CR>', DefaultKeymapOpts('CellularAutomaton - Rain'))
-            Keymap('n', '<leader>xg', '<cmd>CellularAutomaton game_of_life<CR>', DefaultKeymapOpts('CellularAutomaton - Game of Life'))
+            SetupCellularAutomaton()
         end,
-    }}
+    } }
 
 -- for _,line in ipairs(plugins_spec) do print(table.concat(line)) end
 -- for _,line in ipairs(plugins_spec) do print(line) end
 
-require('lazy').setup( { spec = plugins_spec } )
+require('lazy').setup({ spec = plugins_spec })
