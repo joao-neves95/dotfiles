@@ -1,7 +1,11 @@
-from typing import Iterable
+from datetime import datetime
+import re
+
 from nevespy import lists
 
-import re
+
+def get_current_year():
+    return datetime.now().year
 
 
 def find_and_increment_idx(source: str, start_at_idx: int, query: str):
@@ -13,6 +17,10 @@ def find_and_increment_idx(source: str, start_at_idx: int, query: str):
             return i
 
     return -1
+
+
+def str_is_re(input_str: str, regex_pattern: str):
+    return re.match(regex_pattern, input_str) is not None
 
 
 def split_str_by_re(input_str: str, regex_pattern: str):
