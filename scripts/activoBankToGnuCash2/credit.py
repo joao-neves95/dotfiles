@@ -76,7 +76,14 @@ def __convert_activobank_credit_row_to_gnucash_csv_row(row: str) -> Iterable[str
 
     description = " ".join(row_parts[descriptionStartInclusive:descriptionEndExclusive])
 
-    movement_value = row_parts[descriptionEndExclusive]
+    movement_value = (
+        row_parts[descriptionEndExclusive]
+        if (
+            row_parts[descriptionStartInclusive]
+            in ("CRED.", ">PAGAMENTO")
+        )
+        else "-" + row_parts[descriptionEndExclusive]
+    )
 
     return [transaction_date, movement_value, description]
 
