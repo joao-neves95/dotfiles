@@ -2,11 +2,11 @@ from nevespy.fs.pdf import read_pdf_file_pages
 from nevespy.fs.csv import write_csv_file
 
 from credit import (
-    convert_activobank_credit_row_to_gnucash_csv_row,
+    convert_all_activobank_credit_rows_to_gnucash_csv_rows,
     extract_credit_statement_table_rows,
 )
 from debit import (
-    convert_activobank_debit_row_to_gnucash_csv_row,
+    convert_all_activobank_debit_rows_to_gnucash_csv_rows,
     extract_debit_statement_table_rows,
 )
 
@@ -41,32 +41,24 @@ def main():
     )
 
     print(f"{len(all_rows)} transactions extracted.")
-
-    # print("\n".join(all_rows))
-
     print("Building CSV file...")
 
     csv = [["Date", "Deposit", "Description"]]
-
-    for row in all_rows:
-        parsed_row = (
-            convert_activobank_debit_row_to_gnucash_csv_row(row)
+    csv.extend(
+        (
+            convert_all_activobank_debit_rows_to_gnucash_csv_rows(all_rows)
             if is_debit_statement
-            else convert_activobank_credit_row_to_gnucash_csv_row(row)
+            else convert_all_activobank_credit_rows_to_gnucash_csv_rows(all_rows)
         )
-
-        csv.append(parsed_row)
+    )
 
     print(f"CSV file with {len(csv) - 1} transactions created. All ready to write.")
-
     print("Writing CSV file...")
 
     write_csv_file("./data/activobankToGnuCash_tx", csv)
 
     print("File written.")
-
     print(csv)
-
     print("Done")
 
     return

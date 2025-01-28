@@ -4,6 +4,7 @@ from nevespy import lists
 
 import helpers
 
+
 def extract_credit_statement_table_rows(sub_pages: Iterable[str]) -> Iterable[str]:
     all_movements = []
 
@@ -41,7 +42,22 @@ def extract_credit_statement_table_rows(sub_pages: Iterable[str]) -> Iterable[st
 # end def
 
 
-def convert_activobank_credit_row_to_gnucash_csv_row(row: str) -> Iterable[str]:
+def convert_all_activobank_credit_rows_to_gnucash_csv_rows(
+    all_rows: Iterable[str],
+) -> Iterable[Iterable[str]]:
+    csv_rows = []
+
+    for row in all_rows:
+        csv_rows.append(__convert_activobank_credit_row_to_gnucash_csv_row(row))
+    # end for
+
+    return csv_rows
+
+
+# end def
+
+
+def __convert_activobank_credit_row_to_gnucash_csv_row(row: str) -> Iterable[str]:
     """
     Args:
         row (str):

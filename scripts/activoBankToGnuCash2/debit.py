@@ -62,7 +62,35 @@ def extract_debit_statement_table_rows(sub_pages: Iterable[str]) -> Iterable[str
 # end def
 
 
-def convert_activobank_debit_row_to_gnucash_csv_row(row: str) -> Iterable[str]:
+def convert_all_activobank_debit_rows_to_gnucash_csv_rows(
+    all_rows: Iterable[str],
+) -> Iterable[Iterable[str]]:
+    csv_rows = []
+
+    # There's no way to know if a debit transaction is a deposit or a withdrawal, so we need to keep track of the account value.
+    # Unfortunately the first row will always be positive.
+    previous_account_value = 0.0
+
+    for row in all_rows:
+        (parsed_rows, new_account_value) = (
+            __convert_activobank_debit_row_to_gnucash_csv_row(
+                row, previous_account_value
+            )
+        )
+
+        csv_rows.append(parsed_rows)
+        previous_account_value = new_account_value
+    # end for
+
+    return csv_rows
+
+
+# end def
+
+
+def __convert_activobank_debit_row_to_gnucash_csv_row(
+    row: str, previous_account_value: float
+) -> tuple[Iterable[str], float]:
     """
     Args:
         row (str): "mm.dd mm.dd This is the description 420.69 42 069.69"
@@ -70,9 +98,9 @@ def convert_activobank_debit_row_to_gnucash_csv_row(row: str) -> Iterable[str]:
     row_parts = row.split(" ")
     move_date = str(helpers.get_current_year()) + "/" + row_parts[0].replace(".", "/")
 
-    last_part_idx = len(row_parts)
+    last_idx_of_description = len(row_parts)
     for row_part_from_end_index in reversed(range(0, len(row_parts))):
-        last_part_idx = row_part_from_end_index
+        last_idx_of_description = row_part_from_end_index
         row_part = row_parts[row_part_from_end_index]
 
         if "." not in row_part:
@@ -89,22 +117,34 @@ def convert_activobank_debit_row_to_gnucash_csv_row(row: str) -> Iterable[str]:
                 continue
     # end for
 
-    transaction_value = ""
+    description = " ".join(row_parts[2 : last_idx_of_description + 1])
 
-    for part in row_parts[last_part_idx + 1 :]:
+    transaction_value = ""
+    transaction_value_len = 0
+    for part in row_parts[last_idx_of_description + 1 :]:
         if "." in part:
             transaction_value += part.strip()
+            transaction_value_len += 1
             # Break on the first decimal point found.
             break
         if part.isdigit():
             transaction_value += part.strip()
+            transaction_value_len += 1
             continue
         else:
             break
+    # end for
 
-    description = " ".join(row_parts[2 : last_part_idx + 1])
+    new_account_value = float(
+        "".join(row_parts[last_idx_of_description + 1 + transaction_value_len :])
+    )
+    account_value_delta = new_account_value - previous_account_value
 
-    return [move_date, transaction_value, description]
+    transaction_value = (
+        transaction_value if account_value_delta >= 0 else ("-" + transaction_value)
+    )
+
+    return ([move_date, transaction_value, description], new_account_value)
 
 
 # end def
