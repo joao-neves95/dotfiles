@@ -141,7 +141,21 @@ def __convert_activobank_debit_row_to_gnucash_csv_row(
     account_value_delta = new_account_value - previous_account_value
 
     transaction_value = (
-        transaction_value if account_value_delta >= 0 else ("-" + transaction_value)
+        ("-" + transaction_value)
+        # This is because there's no way of knowing if the first transaction is a deposit or a withdrawal.
+        if previous_account_value == 0
+        and any(
+            substring in description
+            for substring in (
+                "COMPRA",
+                "TRF P/",
+                "Pagamento",
+                "PAG.",
+                "DD ",
+                "DDPT",
+            )
+        )
+        else transaction_value if account_value_delta >= 0 else "-" + transaction_value
     )
 
     return ([move_date, transaction_value, description], new_account_value)
