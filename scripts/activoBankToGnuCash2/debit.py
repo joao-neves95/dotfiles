@@ -3,6 +3,7 @@ from typing import Iterable
 from nevespy import lists
 
 import helpers
+from constants import default_account_name
 
 
 def extract_debit_statement_table_rows(sub_pages: Iterable[str]) -> Iterable[str]:
@@ -158,7 +159,15 @@ def __convert_activobank_debit_row_to_gnucash_csv_row(
         else transaction_value if account_value_delta >= 0 else "-" + transaction_value
     )
 
-    return ([move_date, transaction_value, description], new_account_value)
+    return (
+        [
+            default_account_name,
+            move_date,
+            transaction_value,
+            description,
+        ],
+        new_account_value,
+    )
 
 
 # end def

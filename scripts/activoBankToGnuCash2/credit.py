@@ -3,6 +3,7 @@ from typing import Iterable
 from nevespy import lists
 
 import helpers
+from constants import default_account_name
 
 
 def extract_credit_statement_table_rows(sub_pages: Iterable[str]) -> Iterable[str]:
@@ -76,16 +77,18 @@ def __convert_activobank_credit_row_to_gnucash_csv_row(row: str) -> Iterable[str
 
     description = " ".join(row_parts[descriptionStartInclusive:descriptionEndExclusive])
 
-    movement_value = (
+    transaction_value = (
         row_parts[descriptionEndExclusive]
-        if (
-            row_parts[descriptionStartInclusive]
-            in ("CRED.", ">PAGAMENTO")
-        )
+        if (row_parts[descriptionStartInclusive] in ("CRED.", ">PAGAMENTO"))
         else "-" + row_parts[descriptionEndExclusive]
     )
 
-    return [transaction_date, movement_value, description]
+    return [
+        default_account_name,
+        transaction_date,
+        transaction_value,
+        description,
+    ]
 
 
 # end def

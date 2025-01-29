@@ -43,7 +43,7 @@ def main():
     print(f"{len(all_rows)} transactions extracted.")
     print("Building CSV file...")
 
-    csv = [["Date", "Deposit", "Description"]]
+    csv = [["Account", "Date", "Amount", "Description"]]
     csv.extend(
         (
             convert_all_activobank_debit_rows_to_gnucash_csv_rows(all_rows)
